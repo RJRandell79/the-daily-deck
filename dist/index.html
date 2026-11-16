@@ -87,7 +87,7 @@ summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--acc)}
 .btns{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 .line,.tester ol{font-size:14px;padding-left:20px}
 .lab{margin-top:22px;border-top:1px dashed var(--line);padding-top:10px}.lab p{font-size:13px;color:var(--muted)}
-#tip{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;padding:9px 13px;border-radius:10px;font-size:14px;max-width:90vw;opacity:0;pointer-events:none;transition:.2s}
+#tip{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));z-index:20;transform:translateX(-50%) translateY(-10px);background:var(--ink);color:#fff;padding:9px 13px;border-radius:10px;font-size:14px;max-width:90vw;opacity:0;pointer-events:none;transition:.2s}
 #tip.show{opacity:1;transform:translateX(-50%)}
 @media (min-width:560px){.st{font-size:12px;padding:7px}.hc{font-size:13px}}
 .abrow{display:flex;align-items:center;gap:6px;margin:0 0 10px;flex-wrap:wrap}
@@ -732,6 +732,7 @@ function myStatsHtml() {
 }
 
 function render() {
+  hideTip();
   let main = header() + track();
   if (S.phase === 'draft') main += draftView();
   else if (S.phase === 'choose') main += oppPanel() + abilityRow(true) + handView(true);
@@ -836,8 +837,8 @@ document.addEventListener('click', e => {
   if (t.dataset.abil && S.phase === 'choose') {
     const k = t.dataset.abil;
     if (S.ability === k) { S.ability = null; render(); return; }
-    if (k === 'Scout') { S.ability = 'Scout'; S.scouted[S.round] = true; render(); showTip('Scout used: two more house stats revealed.'); return; }
-    S.ability = k; render(); showTip(`${k}: ${ABILITIES[k]}`); return;
+    if (k === 'Scout') { S.ability = 'Scout'; S.scouted[S.round] = true; render(); return; }
+    S.ability = k; render(); return;
   }
   if (t.dataset.card !== undefined && S.phase === 'choose') { S.sel = +t.dataset.card; S.attr = +t.dataset.attr; render(); return; }
   if (t.id === 'stake') { S.staked = !S.staked; renderBar(); return; }
@@ -853,6 +854,8 @@ document.addEventListener('click', e => {
 });
 
 let tipTimer;
+function hideTip() { const el = document.getElementById('tip'); if (el) el.classList.remove('show'); clearTimeout(tipTimer); }
+document.addEventListener('pointerdown', e => { if (!e.target.closest('[data-ab],[data-info],[data-pick],[data-boost]')) hideTip(); }, true);
 function showTip(msg) { const el = document.getElementById('tip'); el.textContent = msg; el.classList.add('show'); clearTimeout(tipTimer); tipTimer = setTimeout(() => el.classList.remove('show'), 3600); }
 
 window.addEventListener('hashchange', route);

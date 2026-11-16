@@ -485,6 +485,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
   - for the owner, "Load all testers", with a summary per tester and per Boost setting, and a CSV of every game
 - Records draft time and total game time.
 - Version label is now v0.2.3. Rules unchanged.
+- **Fix:** pop-up messages no longer cover the cards or the results. Scout and ability pop-ups are removed (the bottom bar already says the same thing). The remaining pop-ups appear at the top and close on the next tap or screen change.
 
 ### v0.2.2 — 16 Nov 2026
 - **Human stake tracking:** the "Your games" table in the Balance lab now shows, per ability, how often you used it but **declined to stake** (D18). Boost is split by +3 and +2.

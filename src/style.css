@@ -86,7 +86,7 @@ summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--acc)}
 .btns{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 .line,.tester ol{font-size:14px;padding-left:20px}
 .lab{margin-top:22px;border-top:1px dashed var(--line);padding-top:10px}.lab p{font-size:13px;color:var(--muted)}
-#tip{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;padding:9px 13px;border-radius:10px;font-size:14px;max-width:90vw;opacity:0;pointer-events:none;transition:.2s}
+#tip{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));z-index:20;transform:translateX(-50%) translateY(-10px);background:var(--ink);color:#fff;padding:9px 13px;border-radius:10px;font-size:14px;max-width:90vw;opacity:0;pointer-events:none;transition:.2s}
 #tip.show{opacity:1;transform:translateX(-50%)}
 @media (min-width:560px){.st{font-size:12px;padding:7px}.hc{font-size:13px}}
 .abrow{display:flex;align-items:center;gap:6px;margin:0 0 10px;flex-wrap:wrap}

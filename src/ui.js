@@ -201,6 +201,7 @@ function myStatsHtml() {
 }
 
 function render() {
+  hideTip();
   let main = header() + track();
   if (S.phase === 'draft') main += draftView();
   else if (S.phase === 'choose') main += oppPanel() + abilityRow(true) + handView(true);
@@ -305,8 +306,8 @@ document.addEventListener('click', e => {
   if (t.dataset.abil && S.phase === 'choose') {
     const k = t.dataset.abil;
     if (S.ability === k) { S.ability = null; render(); return; }
-    if (k === 'Scout') { S.ability = 'Scout'; S.scouted[S.round] = true; render(); showTip('Scout used: two more house stats revealed.'); return; }
-    S.ability = k; render(); showTip(`${k}: ${ABILITIES[k]}`); return;
+    if (k === 'Scout') { S.ability = 'Scout'; S.scouted[S.round] = true; render(); return; }
+    S.ability = k; render(); return;
   }
   if (t.dataset.card !== undefined && S.phase === 'choose') { S.sel = +t.dataset.card; S.attr = +t.dataset.attr; render(); return; }
   if (t.id === 'stake') { S.staked = !S.staked; renderBar(); return; }
@@ -322,6 +323,8 @@ document.addEventListener('click', e => {
 });
 
 let tipTimer;
+function hideTip() { const el = document.getElementById('tip'); if (el) el.classList.remove('show'); clearTimeout(tipTimer); }
+document.addEventListener('pointerdown', e => { if (!e.target.closest('[data-ab],[data-info],[data-pick],[data-boost]')) hideTip(); }, true);
 function showTip(msg) { const el = document.getElementById('tip'); el.textContent = msg; el.classList.add('show'); clearTimeout(tipTimer); tipTimer = setTimeout(() => el.classList.remove('show'), 3600); }
 
 window.addEventListener('hashchange', route);
