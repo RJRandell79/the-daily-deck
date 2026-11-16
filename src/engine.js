@@ -10,7 +10,7 @@ const ABILITIES = {
   Shield: 'If you lose or tie this round while staked, you lose nothing.'
 };
 const CFG = {
-  rounds: 5, boostCap: null, boostNoStake: false, maxStakes: null, stakePolicy: 'careful', pool: 12, hand: 8, starCount: 5, starLimit: 3, abilitiesDealt: 3,
+  rounds: 5, boostCap: null, boostNoStake: false, maxStakes: null, stakePolicy: 'careful', finaleMult: 3, finaleStacksWithStake: true, forceRule: null, pool: 12, hand: 8, starCount: 5, starLimit: 3, abilitiesDealt: 3,
   win: 10, tie: 5, stakeLoss: 10, boost: 3, stakeThreshold: 2,
   card: { total: [18, 22], min: 1, max: 8 },
   house: { total: [28, 34], min: 4, max: 10 }
@@ -66,7 +66,7 @@ function makeCondition(rng) {
   const t = rng.pick(['double', 'rotation', 'finale', 'lowball', 'tiesWin']);
   if (t === 'double') { const a = rng.int(0, 3); return { type: t, attr: a, name: `${ATTRS[a]} Surge`, text: `Rounds won on ${ATTRS[a]} score double.` }; }
   if (t === 'rotation') return { type: t, name: 'Rotation', text: 'You can’t compare the same stat in two rounds running.' };
-  if (t === 'finale') return { type: t, name: 'Grand Finale', text: 'Round 5 scores triple — good or bad.' };
+  if (t === 'finale') return { type: t, name: 'Grand Finale', text: CFG.finaleStacksWithStake ? `Round 5 scores ×${CFG.finaleMult} — good or bad.` : `Round 5 scores ×${CFG.finaleMult} — but not if you stake it.` };
   if (t === 'lowball') { const r = rng.int(1, 3); return { type: t, round: r, name: 'Low Ball', text: `In round ${r + 1}, the LOWER number wins.` }; }
   return { type: t, name: 'Underdog', text: 'Ties count as wins (with a margin of 0).' };
 }
@@ -84,7 +84,9 @@ function generateDeck(seed) {
     house.push({ stats, clue, scout: others.slice(0, 2).sort() });
   }
   let starMask = 0; pool.forEach((c, i) => { if (c.star) starMask |= 1 << i; });
-  return { seed, pool, starMask, abilities, house, condition: makeCondition(rng) };
+  let condition = makeCondition(rng);
+  if (CFG.forceRule === 'finale') condition = { type: 'finale', name: 'Grand Finale', text: `Round 5 scores ×${CFG.finaleMult}.` };
+  return { seed, pool, starMask, abilities, house, condition };
 }
 
 // Score one round. ability: null | 'Scout' | 'Switch' | 'Boost' | 'Shield'. Switch is handled by the caller picking attr.
@@ -101,7 +103,10 @@ function scoreRound(deck, { card, attr, staked, round, ability }, houseStats) {
   else if (staked) { if (ability === 'Shield') { pts = 0; notes.push('Shield saved the stake'); } else { pts = -CFG.stakeLoss; notes.push('stake lost'); } }
   else pts = outcome === 'tie' ? CFG.tie : 0;
   if (cond.type === 'double' && attr === cond.attr && pts > 0) { pts *= 2; notes.push(`${ATTRS[attr]} Surge ×2`); }
-  if (cond.type === 'finale' && round === CFG.rounds - 1 && pts !== 0) { pts *= 3; notes.push('Finale ×3'); }
+  if (cond.type === 'finale' && round === CFG.rounds - 1 && pts !== 0) {
+    if (staked && !CFG.finaleStacksWithStake) notes.push('Finale multiplier not applied to a stake');
+    else { pts *= CFG.finaleMult; notes.push(`Finale ×${CFG.finaleMult}`); }
+  }
   return { you, them, diff, outcome, pts, notes, low };
 }
 

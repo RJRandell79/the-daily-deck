@@ -449,14 +449,54 @@ With the v0.1 strengths applied to the v0.2 draft and ability rules, the careful
 
 **Status:** 🔄 Promising but not decided. Now playable in the prototype (v0.2.4, Balance lab → Experiment E3). Next: human playtests, and consider a smarter bot that values saving stakes.
 
-### 12.8 Human signal: declining to stake
+### 12.8 Experiment E4 — Taming the staked Grand Finale (16 Nov 2026)
+
+**Why:** in Rob's E3 session, a staked ×3 round 5 swung about ±60 points and decided all three Grand Finale games (§19.3).
+
+**Method:** 400 decks, all forced to Grand Finale, under the E3 rules (2 stakes, Boost +3). The two fixes were tested separately:
+- **E3 reference:** round 5 ×3, which also applies to a staked round 5 (current rule).
+- **E4a:** round 5 ×2, still applying to a staked round 5.
+- **E4b:** round 5 ×3, but **not** applied to a staked round 5. A staked round 5 scores like any other staked round.
+
+| Measure (Grand Finale decks) | E3 reference (×3, stacks) | **E4a (×2, stacks)** | **E4b (×3, no stacking)** |
+|---|---|---|---|
+| Careful bot average | 87 | 76 | 87 |
+| Perfect average | 150 | 121 | 119 |
+| Careful ÷ perfect | 58% | 63% | 73% |
+| Top Trumps ÷ perfect | 32% | 35% | 40% |
+| Careful score spread (std dev) | 31 | 25 | 25 |
+| Careful round-5 points spread (std dev) | 24 | 16 | 15 |
+| Perfect play stakes round 5 | 99% of decks | 99% | **0%** |
+| Value of stake timing (perfect: free placement vs forced R1–R2) | +33 | **+18** | **+1.5** |
+| Careful stake success | 75% | 75% | 83% |
+
+**Rob's three Grand Finale games re-scored** (same plays and stakes; timing cost = best placement for his plays minus actual):
+
+| Game | E3 (×3) | E4a (×2) | E4b (no stacking) |
+|---|---|---|---|
+| fmzw3n | 54 (cost 16) | 54 (cost 16) | 54 (cost 16) |
+| w4kp6j | 95 (cost 22) | 84 (cost 11) | 95 (cost 0) |
+| 6reh6s | 18 (cost 58) | 28 (cost 43) | 38 (cost 38) |
+| **Total timing cost** | **96** | **70** | **54** |
+
+**Findings:**
+1. **E4a keeps the decision and reduces the lottery.** Saving a stake for the finale is still optimal (perfect play does it 99% of the time), and timing is still worth more on Finale days (+18) than on any other rule. But the round-5 swing falls by about a third.
+2. **E4b removes the decision.** With no stacking, staking round 5 is never right (perfect play: 0%), because an unstaked ×3 already pays more with no downside. Finale days stop creating any stake-timing choice (+1.5). The ×3 becomes a free bonus for whatever you play in round 5. That runs against §2.3 (interesting choices).
+3. **Both versions reduce score spread equally** (std dev 31 → 25).
+4. **The careful bot barely stakes round 5 in any version (1–10%).** Its numbers mainly reflect the scoring change, not better play.
+
+**Recommendation:** E4a (Finale ×2) is the better fit for the design principles. It keeps "do I hold a stake for the finale?" as a real decision while cutting the swing. E4b turns the finale into a no-risk bonus.
+
+**Status:** 🔄 Results in. Decision pending (Rob).
+
+### 12.9 Human signal: declining to stake
 
 The bot's rules are fixed, so it can't show whether people *perceive* the same risk. From v0.2.2 the prototype records, per ability, how often **players use the ability but choose not to stake**. It's shown under "Your games in this browser" in the Balance lab, with Boost split into +3 and +2.
 
 - A high decline rate with Boost would suggest players see Boost as a safety tool rather than a stake multiplier. If so, E1's and E2's bot-based numbers overstate its real-world value.
 - From v0.2.3, every game is also saved in full to the shared test log (§19.1), so this can be measured across all testers.
 
-### 12.9 Historical — v0.1 (400 decks, 8 fixed cards, abilities built into cards)
+### 12.10 Historical — v0.1 (400 decks, 8 fixed cards, abilities built into cards)
 
 | | Top Trumps | Careful bot | Perfect |
 |---|---|---|---|
@@ -543,6 +583,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
+| D22 | 16 Nov 2026 | Test two Grand Finale fixes separately under E3 rules: E4a (×2) and E4b (×3 not stacking with a stake). | A staked ×3 round 5 dominated Rob's Finale games. | ✅ Run (§12.8). E4a recommended, pending decision |
 | D21 | 16 Nov 2026 | Playtest E3 (2 stakes) in the prototype, recording which rounds each player stakes alongside the careful and perfect choices for the same deck. | The bot can't exploit stake timing (§12.7), so human allocation is the real test of E3. | 🔄 First session done (§19.3). Needs fresh testers. |
 | D20 | 16 Nov 2026 | Test a stake limit as E3, with a control: E3a (2 stakes, bot chooses when) against E3b (2 stakes, forced into R1–R2). The perfect bot optimises its allocation under the limit. Record which rounds get staked. | Separates the effect of *limiting* stakes from the effect of *choosing when* to use them. | ✅ Run. Results in §12.7 |
 | D19 | 16 Nov 2026 | Log every test game in full to a shared database (with a copy on the device), so results survive across devices and can be analysed together. | Playtest evidence is what settles open questions such as D16. Browser-only data was being lost. | ✅ Decided (in prototype v0.2.3) |
@@ -552,6 +593,12 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 ---
 
 ## 16. Change log
+
+### Simulation tools — 16 Nov 2026 (E4; no change to the playable rules)
+- Engine options: `finaleMult` (default 3), `finaleStacksWithStake` (default true), and `forceRule` (to generate decks with one rule only).
+- New script `sim/e4.js`, with variants `e3`, `e4a` and `e4b`.
+- `sim/stake-regret.js` can re-score logged games under E4 settings (`FINALE_MULT`, `FINALE_NOSTACK`, `ONLY_RULE`).
+- The prototype's round-5 label now shows the configured Finale multiplier.
 
 ### v0.2.4 — 16 Nov 2026
 - **Experiment E3 toggle:** the Balance lab can set **Stakes: Unlimited / 2 per game**. The setting applies to new games and lab runs, and a "2 stakes" tag shows under the title while it's active. Default rules unchanged (unlimited).
@@ -659,10 +706,10 @@ These are the current values in the v0.2 prototype (`CFG` in the engine).
 
 ## 18. Open questions
 
-1. **Grand Finale with stakes:** a staked ×3 round 5 swings about ±60 points and decided Rob's three worst E3 games (§19.3). Good drama or too much of a lottery? Candidates: Finale ×2, or the multiplier not stacking with stakes.
+1. **Grand Finale with stakes:** a staked ×3 round 5 swings about ±60 points and decided Rob's three worst E3 games (§19.3). E4 (§12.8) suggests Finale ×2 (E4a) keeps the decision while cutting the swing. Stopping the stacking (E4b) removes the decision altogether. Decision pending.
 2. **Staking (E3):** two stakes per game creates a real timing decision in principle (worth +10, or +34 on Grand Finale, under perfect play), but our bot can't exploit it. Do humans save stakes for the right rounds? And what should happen to Switch and Shield, which lose almost all their value under E3?
 3. **Ability usage by humans:** Switch and Shield were left unused in most early games (§19.2). Saved deliberately, forgotten, or not valued?
-4. **Boost (E1, E2):** +2 is the leading candidate. Does it feel right in play? How often do people decline to stake with it (§12.8)? E2 showed the stake drives Boost's value, but removing it also removes a decision.
+4. **Boost (E1, E2):** +2 is the leading candidate. Does it feel right in play? How often do people decline to stake with it (§12.9)? E2 showed the stake drives Boost's value, but removing it also removes a decision.
 5. **Is Shield interesting**, or just a free stake that gets spent late?
 6. **Does the draft feel like a decision or a chore?** Does it stay within about a minute?
 7. **Is staking exciting or punishing?** Staked ties cost 10 unless shielded.

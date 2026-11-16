@@ -68,7 +68,7 @@ function track() {
   return `<section class="track">${S.deck.house.map((h, i) => {
     const l = S.log[i]; const cur = i === S.round && (S.phase === 'choose' || S.phase === 'switch' || S.phase === 'result');
     return `<div class="hc ${cur ? 'cur' : ''} ${l ? 'past' : ''}">
-      <div class="r">R${i + 1}${isLow(i) ? ' <span class="low">LOW</span>' : ''}${cond().type === 'finale' && i === 4 ? ' <span class="x3">×3</span>' : ''}</div>
+      <div class="r">R${i + 1}${isLow(i) ? ' <span class="low">LOW</span>' : ''}${cond().type === 'finale' && i === 4 ? ` <span class="x3">×${CFG.finaleMult}</span>` : ''}</div>
       ${l ? `<div class="hs">${h.stats.join(' ')}</div>${resultMark(l)}` : `<div class="clue">${h.clue.short}</div>${S.scouted[i] ? '<div class="sc">scouted</div>' : ''}`}
     </div>`;
   }).join('')}</section>`;
