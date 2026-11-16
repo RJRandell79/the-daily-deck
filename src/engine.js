@@ -1,5 +1,5 @@
 // ===== The Daily Deck — game engine v0.2 (no DOM) =====
-const VERSION = 'v0.2.3';
+const VERSION = 'v0.2.4';
 const ATTRS = ['Power', 'Speed', 'Range', 'Grit'];
 const SHORT = ['PWR', 'SPD', 'RNG', 'GRT'];
 const ABIL_KEYS = ['Scout', 'Switch', 'Boost', 'Shield'];

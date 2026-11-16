@@ -1,6 +1,6 @@
 # The Daily Deck — Gameplay Design Document
 
-> **Status:** Living document · **Current version:** v0.2.3 (placeholder-numbers prototype)
+> **Status:** Living document · **Current version:** v0.2.4 (placeholder-numbers prototype)
 > **Last updated:** 16 Nov 2026
 > **Prototype:** https://claude.ai/artifact/9dszi39qzrajPPTgUntgRo
 
@@ -447,7 +447,7 @@ With the v0.1 strengths applied to the v0.2 draft and ability rules, the careful
 - The careful bot's stake allocation is simplistic: it treats its estimates as certain and spends stakes early. A smarter allocation bot, or human data, is needed before judging E3a properly.
 - Ability contributions under E3 depend partly on the bot's fixed ability rules.
 
-**Status:** 🔄 Promising but not decided. Next: playtest a 2-stake version (and consider a smarter bot that values saving stakes).
+**Status:** 🔄 Promising but not decided. Now playable in the prototype (v0.2.4, Balance lab → Experiment E3). Next: human playtests, and consider a smarter bot that values saving stakes.
 
 ### 12.8 Human signal: declining to stake
 
@@ -543,6 +543,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
+| D21 | 16 Nov 2026 | Playtest E3 (2 stakes) in the prototype, recording which rounds each player stakes alongside the careful and perfect choices for the same deck. | The bot can't exploit stake timing (§12.7), so human allocation is the real test of E3. | 🔄 Playtesting |
 | D20 | 16 Nov 2026 | Test a stake limit as E3, with a control: E3a (2 stakes, bot chooses when) against E3b (2 stakes, forced into R1–R2). The perfect bot optimises its allocation under the limit. Record which rounds get staked. | Separates the effect of *limiting* stakes from the effect of *choosing when* to use them. | ✅ Run. Results in §12.7 |
 | D19 | 16 Nov 2026 | Log every test game in full to a shared database (with a copy on the device), so results survive across devices and can be analysed together. | Playtest evidence is what settles open questions such as D16. Browser-only data was being lost. | ✅ Decided (in prototype v0.2.3) |
 
@@ -551,6 +552,18 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 ---
 
 ## 16. Change log
+
+### v0.2.4 — 16 Nov 2026
+- **Experiment E3 toggle:** the Balance lab can set **Stakes: Unlimited / 2 per game**. The setting applies to new games and lab runs, and a "2 stakes" tag shows under the title while it's active. Default rules unchanged (unlimited).
+- **Stake button** shows how many stakes are left ("2 left", "1 left") and is disabled once they're used.
+- **End screen:** compares the rounds you staked with the rounds the careful bot and perfect play chose for the same deck.
+- **Test log:**
+  - each game records its stake limit, **the rounds you staked**, and the careful and perfect stake rounds
+  - the CSV gains columns `stakeLimit`, `stakedRounds`, `carefulStakedRounds` and `perfectStakedRounds`
+  - "My games" shows your staked rounds
+  - the all-testers summary groups by Boost and stake setting
+- **Balance lab:** shows how stakes are spread across R1–R5 for the careful and perfect bots.
+- The experiment tags moved under the title so the header doesn't wrap on phones.
 
 ### Simulation tools — 16 Nov 2026 (no change to the playable prototype)
 - The engine supports an optional stake limit (`maxStakes`) and a stake policy for the careful bot (`careful` or `first`).

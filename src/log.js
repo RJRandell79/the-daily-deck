@@ -11,11 +11,12 @@ function gameId() { return Date.now().toString(36) + '-' + Math.random().toStrin
 function buildRecord(S) {
   const now = new Date();
   return {
-    id: gameId(), v: VERSION, boost: CFG.boost, mode: S.mode, code: S.code || null, seed: S.seed,
+    id: gameId(), v: VERSION, boost: CFG.boost, maxStakes: CFG.maxStakes || null, mode: S.mode, code: S.code || null, seed: S.seed,
     day: todayStr(), playedAt: now.toISOString(), replay: S.mode === 'daily' && !!(S.record && S.record.startsWith('Replay')),
     rule: S.deck.condition.name, ruleType: S.deck.condition.type, abilities: S.deck.abilities.slice(),
     hand: S.hand.map(i => S.deck.pool[i].id), stars: S.hand.filter(i => S.deck.pool[i].star).length,
     rounds: S.log.map((l, i) => ({ r: i + 1, card: S.deck.pool[l.card].id, attr: ATTRS[l.attr], ability: l.ability || null, staked: !!l.staked, you: l.you, them: l.them, outcome: l.outcome, pts: l.pts })),
+    stakedRounds: S.bench.youStaked, carefulStakedRounds: S.bench.carefulStaked, perfectStakedRounds: S.bench.perfectStaked,
     total: S.total, perfect: S.bench.best, careful: S.bench.careful, topTrumps: S.bench.tt,
     pctPerfect: S.bench.best > 0 ? Math.round(100 * S.total / S.bench.best) : null,
     draftSecs: S.tDraft ? Math.round((S.tDraft - S.t0) / 1000) : null,
@@ -84,16 +85,17 @@ function fmtDate(iso) { const d = new Date(iso); return d.toLocaleDateString('en
 function roundShort(x) { const o = { win: '✓', tie: '=', loss: '✗' }[x.outcome]; return `${x.card}·${x.attr.slice(0, 3)}${x.ability ? '+' + x.ability : ''}${x.staked ? '●' : ''}${o}${x.pts > 0 ? '+' : ''}${x.pts}`; }
 
 function gamesCsv(games) {
-  const head = ['playedAt', 'version', 'boost', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
+  const head = ['playedAt', 'version', 'boost', 'stakeLimit', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'stakedRounds', 'carefulStakedRounds', 'perfectStakedRounds', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
   const q = s => `"${String(s).replace(/"/g, '""')}"`;
-  const rows = games.map(g => [g.playedAt, g.v, g.boost, g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs].map(q).join(','));
+  const sr = a => (a || []).map(r => 'R' + r).join(' ');
+  const rows = games.map(g => [g.playedAt, g.v, g.boost, g.maxStakes || 'unlimited', g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), sr(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)), sr(g.carefulStakedRounds), sr(g.perfectStakedRounds), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs].map(q).join(','));
   return [head.join(','), ...rows].join('\n');
 }
 
 function myGamesTable(games) {
   if (!games.length) return '<p class="note">No games logged yet on this device.</p>';
-  return `<table class="tbl"><thead><tr><th>When</th><th>Deck</th><th>Score</th><th>% perf.</th><th>Draft</th></tr></thead><tbody>
-    ${games.slice(-15).reverse().map(g => `<tr><td>${fmtDate(g.playedAt)}${g.synced ? '' : ' <span class="unsynced" title="Not yet in the shared log">•</span>'}</td><td>${g.mode === 'daily' ? 'Daily' + (g.replay ? ' (replay)' : '') : g.code}<small> · B+${g.boost}</small></td><td>${g.total}</td><td>${g.pctPerfect ?? '—'}%</td><td>${g.draftSecs ?? '—'}s</td></tr>`).join('')}
+  return `<table class="tbl"><thead><tr><th>When</th><th>Deck</th><th>Score</th><th>% perf.</th><th>Staked</th></tr></thead><tbody>
+    ${games.slice(-15).reverse().map(g => `<tr><td>${fmtDate(g.playedAt)}${g.synced ? '' : ' <span class="unsynced" title="Not yet in the shared log">•</span>'}</td><td>${g.mode === 'daily' ? 'Daily' + (g.replay ? ' (replay)' : '') : g.code}<small> · B+${g.boost}${g.maxStakes ? ' · ' + g.maxStakes + 'st' : ''}</small></td><td>${g.total}</td><td>${g.pctPerfect ?? '—'}%</td><td>${(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)).map(r => 'R' + r).join(' ') || '—'}</td></tr>`).join('')}
   </tbody></table>`;
 }
 
@@ -119,7 +121,8 @@ function allTestersHtml() {
   const all = Cloud.all.flatMap(p => p.games.map(g => ({ ...g, player: p.name })));
   if (!all.length) return '<p class="note">No games in the shared log yet.</p>';
   const avg = (arr, f) => arr.length ? Math.round(arr.reduce((s, x) => s + (f(x) || 0), 0) / arr.length) : '—';
-  const byBoost = [3, 2].map(b => { const g = all.filter(x => x.boost === b); return g.length ? `<tr><td>Boost +${b}</td><td>${g.length}</td><td>${avg(g, x => x.total)}</td><td>${avg(g, x => x.pctPerfect)}%</td><td>${avg(g, x => x.draftSecs)}s</td></tr>` : ''; }).join('');
+  const settings = [...new Set(all.map(x => `Boost +${x.boost} · ${x.maxStakes ? x.maxStakes + ' stakes' : 'unlimited stakes'}`))];
+  const byBoost = settings.map(k => { const g = all.filter(x => `Boost +${x.boost} · ${x.maxStakes ? x.maxStakes + ' stakes' : 'unlimited stakes'}` === k); return `<tr><td>${k}</td><td>${g.length}</td><td>${avg(g, x => x.total)}</td><td>${avg(g, x => x.pctPerfect)}%</td><td>${avg(g, x => x.draftSecs)}s</td></tr>`; }).join('');
   return `<h3>All testers</h3>
     <table class="tbl"><thead><tr><th>Tester</th><th>Games</th><th>Avg score</th><th>Avg % perfect</th><th>Avg draft</th></tr></thead><tbody>
     ${Cloud.all.map(p => `<tr><td>${escapeHtml(p.name)}</td><td>${p.games.length}</td><td>${avg(p.games, x => x.total)}</td><td>${avg(p.games, x => x.pctPerfect)}%</td><td>${avg(p.games, x => x.draftSecs)}s</td></tr>`).join('')}
