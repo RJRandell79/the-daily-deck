@@ -1,6 +1,6 @@
 # The Daily Deck — Gameplay Design Document
 
-> **Status:** Living document · **Current version:** v0.2.5 (placeholder-numbers prototype)
+> **Status:** Living document · **Current version:** v0.2.6 (placeholder-numbers prototype)
 > **Last updated:** 16 Nov 2026
 > **Prototype:** https://claude.ai/artifact/9dszi39qzrajPPTgUntgRo
 
@@ -585,6 +585,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
+| D24 | 16 Nov 2026 | Add a Grand Finale practice-deck button so Finale ×2 games can be played on demand. | Grand Finale comes up on only about 1 deck in 5, and it's the rule D23 most needs evidence on. | ✅ Done (v0.2.6) |
 | D23 | 16 Nov 2026 | **Candidate ruleset:** 2 stakes per game with Grand Finale ×2 (E3 + E4a). Treated as a proper candidate, not a provisional experiment. Default rules unchanged until settled after **10–15 more human games**. | E3 made staking a decision. E4a keeps the round-5 stake decision but cuts the swing by about a third. Goal: *a dramatic final decision, not a final-round lottery.* | 🔄 Candidate, playtesting (§19.4) |
 | D22 | 16 Nov 2026 | Test two Grand Finale fixes separately under E3 rules: E4a (×2) and E4b (×3 not stacking with a stake). | A staked ×3 round 5 dominated Rob's Finale games. | ✅ Run (§12.8). E4a recommended, pending decision |
 | D21 | 16 Nov 2026 | Playtest E3 (2 stakes) in the prototype, recording which rounds each player stakes alongside the careful and perfect choices for the same deck. | The bot can't exploit stake timing (§12.7), so human allocation is the real test of E3. | 🔄 First session done (§19.3). Needs fresh testers. |
@@ -596,6 +597,9 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 ---
 
 ## 16. Change log
+
+### v0.2.6 — 16 Nov 2026
+- **Grand Finale practice deck** button (D24): in the Balance lab's candidate-rules box, and on the end screen while the candidate rules are on. Each tap opens a new practice deck whose rule is Grand Finale. These are ordinary decks found by trying random codes, so each one is shareable by its code like any other practice deck. No rules changed.
 
 ### v0.2.5 — 16 Nov 2026
 - **Candidate rules (D23):** the Balance lab toggle is now **Default** (unlimited stakes, Grand Finale ×3) or **2 stakes · Finale ×2**. Choosing the candidate sets the Finale multiplier to ×2 for new games, the bots and lab runs. A lost round-5 stake on Finale days now costs −20 rather than −30.
@@ -879,6 +883,10 @@ The central question is whether a player feels **comfortable saving a stake for 
 | How it felt | Grand Finale tester question | "Dramatic decision" rather than "gamble on the whole game" |
 
 Fresh testers are especially valuable here (see the caveat in §19.3).
+
+**Getting Finale games:** with the candidate rules on, use **Grand Finale practice deck** in the Balance lab, or **Grand Finale deck** on the end screen. Aim for at least 5–6 Finale games within the 10–15. A mix of Finale and ordinary days keeps the overall picture honest.
+
+**Analysing them:** `ONLY_RULE='Grand Finale' FINALE_MULT=2 node sim/stake-regret.js playtests/<file>.csv` gives the timing cost per Finale game, which can be compared with the 96 points across three games under ×3.
 
 ### 19.5 Findings — Rob, session 3, 16 Nov 2026 (v0.2.5)
 

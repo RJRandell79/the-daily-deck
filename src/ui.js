@@ -15,6 +15,8 @@ const fmtRounds = a => a && a.length ? a.map(r => 'R' + r).join(', ') : 'none';
 
 function todayStr() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function niceDate() { return new Date().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }); }
+// A normal practice deck whose daily rule happens to be Grand Finale (shareable by its code like any other).
+function finaleCode() { for (let i = 0; i < 200; i++) { const c = randCode(); if (generateDeck('v02-deck-' + c).condition.type === 'finale') return c; } return randCode(); }
 function randCode() { const ch = 'abcdefghjkmnpqrstuvwxyz23456789'; let s = ''; for (let i = 0; i < 6; i++) s += ch[Math.floor(Math.random() * ch.length)]; return s; }
 
 function newGame(mode, code) {
@@ -172,6 +174,7 @@ function doneView() {
     <div class="btns">
       <button class="btn" data-go="practice">New practice deck</button>
       <button class="btn sec" data-go="replay">Replay this deck</button>
+      ${CFG.maxStakes ? '<button class="btn sec" data-go="finale">Grand Finale deck</button>' : ''}
       ${S.mode !== 'daily' ? '<button class="btn sec" data-go="daily">Today’s deck</button>' : ''}
     </div>
     <details><summary>Show the perfect line</summary><ol class="line">
@@ -192,7 +195,8 @@ function labView() {
   return `<details class="lab" id="labbox"><summary>Balance lab</summary>
     <p>Plays random decks with the bots: scores by rule, plus how each ability is used and what it’s worth. “Contribution” = the careful bot’s score with the ability minus its score without it.</p>
     <div class="expbox"><b>Experiment E1 — Boost size</b><span>Applies to new games and lab runs.</span><div class="seg"><button class="${CFG.boost === 3 ? 'on' : ''}" data-boost="3">Boost +3</button><button class="${CFG.boost === 2 ? 'on' : ''}" data-boost="2">Boost +2</button></div></div>
-    <div class="expbox"><b>Candidate rules — stakes &amp; Grand Finale</b><span>Default: unlimited stakes, Grand Finale ×3. Candidate: 2 stakes per game, Grand Finale ×2. Applies to new games and lab runs; the test log records which rounds you stake.</span><div class="seg"><button class="${CFG.maxStakes == null ? 'on' : ''}" data-stakes="0">Default</button><button class="${CFG.maxStakes === 2 ? 'on' : ''}" data-stakes="2">2 stakes · Finale ×2</button></div></div>
+    <div class="expbox"><b>Candidate rules — stakes &amp; Grand Finale</b><span>Default: unlimited stakes, Grand Finale ×3. Candidate: 2 stakes per game, Grand Finale ×2. Applies to new games and lab runs; the test log records which rounds you stake.</span><div class="seg"><button class="${CFG.maxStakes == null ? 'on' : ''}" data-stakes="0">Default</button><button class="${CFG.maxStakes === 2 ? 'on' : ''}" data-stakes="2">2 stakes · Finale ×2</button></div>
+      <div class="btns"><button class="btn sec" data-go="finale">Grand Finale practice deck</button></div></div>
     <button class="btn sec" id="lab">Run 100 decks (Boost +${CFG.boost}, ${CFG.maxStakes ? CFG.maxStakes + ' stakes' : 'unlimited stakes'})</button><div id="labout"></div>
     <div id="mine">${myStatsHtml()}</div></details>`;
 }
@@ -332,6 +336,7 @@ document.addEventListener('click', e => {
   if (t.id === 'next') { S.round++; S.sel = null; S.attr = null; S.staked = false; S.ability = null; if (S.round >= CFG.rounds) { S.phase = 'done'; finish(); } else S.phase = 'choose'; render(); if (S.phase === 'done') window.scrollTo(0, 0); return; }
   if (t.id === 'copy') { const txt = shareText(); const ta = document.getElementById('sharetxt'); Promise.resolve().then(() => navigator.clipboard.writeText(txt)).then(() => { t.textContent = 'Copied ✓'; }).catch(() => { ta.select(); t.textContent = 'Select & copy above'; }); return; }
   if (t.dataset.go === 'practice') { location.hash = 'deck-' + randCode(); return; }
+  if (t.dataset.go === 'finale') { location.hash = 'deck-' + finaleCode(); return; }
   if (t.dataset.go === 'replay') { newGame(S.mode, S.code); return; }
   if (t.dataset.go === 'daily') { location.hash = 'daily'; return; }
   if (t.id === 'lab') { runLabUI(); return; }

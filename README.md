@@ -2,7 +2,7 @@
 
 A daily tactical card game. Everyone gets the same cards and faces the same house, and tries to get the highest score. Easy to learn, difficult to master, different decisions every day.
 
-**Status:** v0.2.5 — placeholder-numbers prototype for testing the core mechanics before any artwork or theme.
+**Status:** v0.2.6 — placeholder-numbers prototype for testing the core mechanics before any artwork or theme.
 
 - **Play the prototype:** https://claude.ai/artifact/9dszi39qzrajPPTgUntgRo, or open `dist/index.html` in a browser.
 - **Design document:** [`docs/gameplay.md`](docs/gameplay.md). This is the living record of rules, decisions, experiments and playtests.
