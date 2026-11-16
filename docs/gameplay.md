@@ -1,6 +1,6 @@
 # The Daily Deck — Gameplay Design Document
 
-> **Status:** Living document · **Current version:** v0.2.2 (placeholder-numbers prototype)
+> **Status:** Living document · **Current version:** v0.2.3 (placeholder-numbers prototype)
 > **Last updated:** 16 Nov 2026
 > **Prototype:** https://claude.ai/artifact/9dszi39qzrajPPTgUntgRo
 
@@ -379,7 +379,7 @@ With the v0.1 strengths applied to the v0.2 draft and ability rules, the careful
 The bot's rules are fixed, so it can't show whether people *perceive* the same risk. From v0.2.2 the prototype records, per ability, how often **players use the ability but choose not to stake**. It's shown under "Your games in this browser" in the Balance lab, with Boost split into +3 and +2.
 
 - A high decline rate with Boost would suggest players see Boost as a safety tool rather than a stake multiplier. If so, E1's and E2's bot-based numbers overstate its real-world value.
-- **Limitation:** the data stays in each tester's browser. Ask testers for a screenshot of that table until there's a backend.
+- From v0.2.3, every game is also saved in full to the shared test log (§19.1), so this can be measured across all testers.
 
 ### 12.8 Historical — v0.1 (400 decks, 8 fixed cards, abilities built into cards)
 
@@ -468,12 +468,23 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
+| D19 | 16 Nov 2026 | Log every test game in full to a shared database (with a copy on the device), so results survive across devices and can be analysed together. | Playtest evidence is what settles open questions such as D16. Browser-only data was being lost. | ✅ Decided (in prototype v0.2.3) |
 
 *Add new decisions with the next number. If a decision is reversed, mark it ❌ Superseded and reference the new entry rather than deleting it.*
 
 ---
 
 ## 16. Change log
+
+### v0.2.3 — 16 Nov 2026
+- **Shared test log (D19):** every finished game is saved in full (§19.1): on the device, and to the prototype's shared database when the player can write to it. Games saved while offline upload later.
+- **New "Test log" panel:**
+  - shows whether games are reaching the shared log
+  - your recent games
+  - "Copy my games (CSV)"
+  - for the owner, "Load all testers", with a summary per tester and per Boost setting, and a CSV of every game
+- Records draft time and total game time.
+- Version label is now v0.2.3. Rules unchanged.
 
 ### v0.2.2 — 16 Nov 2026
 - **Human stake tracking:** the "Your games" table in the Balance lab now shows, per ability, how often you used it but **declined to stake** (D18). Boost is split by +3 and +2.
@@ -589,3 +600,27 @@ Record each session here. Ask testers the questions on the prototype's end scree
 | Date | Version | Boost | Tester | Deck (daily / code) | Score | Perfect | Understood by R1? | Draft time | Abilities used (round) | Staked with Boost? | Notable moments | Would return? |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | | | | | | | | | | | | | |
+
+### 19.1 The shared test log
+
+From v0.2.3, every finished game is recorded automatically.
+
+**What's recorded:**
+- date and time; version; Boost setting
+- daily or practice deck, its code, and whether it was a replay
+- today's rule and the abilities dealt
+- the drafted hand and the number of ★ cards in it
+- each round: card, stat, ability, staked or not, both numbers, the result and the points
+- the total, and the Top Trumps, careful and perfect benchmark scores
+- % of perfect, draft time and total game time
+
+**Where it goes:**
+- Always to the device, as a backup.
+- Also to the prototype's shared database, at `players/<player id>/games/<game id>`. Each player writes only their own games, and only the owner can change anyone else's.
+
+**Who can write to the shared log:**
+- On an individual Claude plan, only the owner, plus people invited **by email as an Editor**, and only while the prototype isn't also shared by a public link.
+- People who open a public link can play, but their games stay on their device. They can use **Copy my games (CSV)** and send the result.
+- Players must be signed in to Claude.
+
+**Analysis:** the owner can view and copy every tester's games from the Test log panel, or ask Claude to read the shared log directly.

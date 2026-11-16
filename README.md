@@ -2,7 +2,7 @@
 
 A daily tactical card game. Everyone gets the same cards and faces the same house, and tries to get the highest score. Easy to learn, difficult to master, different decisions every day.
 
-**Status:** v0.2.2 — placeholder-numbers prototype for testing the core mechanics before any artwork or theme.
+**Status:** v0.2.3 — placeholder-numbers prototype for testing the core mechanics before any artwork or theme.
 
 - **Play the prototype:** https://claude.ai/artifact/9dszi39qzrajPPTgUntgRo, or open `dist/index.html` in a browser.
 - **Design document:** [`docs/gameplay.md`](docs/gameplay.md). This is the living record of rules, decisions, experiments and playtests.
@@ -12,6 +12,7 @@ A daily tactical card game. Everyone gets the same cards and faces the same hous
 | Path | What it is |
 |---|---|
 | `src/engine.js` | Game rules, deck generation, scoring, solver and benchmark bots. Has no DOM, so it runs in Node too. |
+| `src/log.js` | Test log: saves every finished game on the device and to the prototype's shared database, with CSV export. |
 | `src/ui.js` | Browser interface: the draft, rounds, results and Balance lab. |
 | `src/style.css` | Styles. |
 | `build.sh` | Combines `src/` into a single self-contained `dist/index.html`. |

@@ -16,7 +16,7 @@ function newGame(mode, code) {
   const deck = generateDeck(seed);
   S = { mode, code, seed, deck, phase: 'draft', picked: [], hand: [], round: 0, mask: 0, last: -1,
     scouted: [false, false, false, false, false], abilLeft: deck.abilities.slice(), ability: null,
-    sel: null, attr: null, staked: false, log: [], total: 0, bench: null, record: null };
+    sel: null, attr: null, staked: false, log: [], total: 0, bench: null, record: null, t0: Date.now(), tDraft: null };
   render(); window.scrollTo(0, 0);
 }
 function route() { const m = location.hash.match(/^#deck-([a-z0-9]{4,12})$/); if (m) newGame('practice', m[1]); else newGame('daily'); }
@@ -207,10 +207,10 @@ function render() {
   else if (S.phase === 'switch') main += switchPanel() + abilityRow(false) + handView(false);
   else if (S.phase === 'result') main += resultPanel() + abilityRow(false) + handView(false);
   else main += doneView();
-  main += labView();
-  const labOpen = document.getElementById('labbox') && document.getElementById('labbox').open;
+  main += logView() + labView();
+  const openIds = [...document.querySelectorAll('details[id]')].filter(d => d.open).map(d => d.id);
   $app.innerHTML = main;
-  if (labOpen) document.getElementById('labbox').open = true;
+  openIds.forEach(id => { const d = document.getElementById(id); if (d) d.open = true; });
   renderBar();
 }
 
@@ -254,6 +254,7 @@ function finish() {
     else S.record = `Replay — your recorded score for today is ${d.daily[key]}.`;
   }
   save(d);
+  logGame(S);
 }
 
 function runLabUI() {
@@ -299,7 +300,7 @@ document.addEventListener('click', e => {
     render(); return;
   }
   const t = e.target.closest('button'); if (!t) return;
-  if (t.id === 'confirm' && S.picked.length === CFG.hand) { S.hand = S.picked.slice().sort((a, b) => a - b); S.phase = 'choose'; render(); window.scrollTo(0, 0); return; }
+  if (t.id === 'confirm' && S.picked.length === CFG.hand) { S.tDraft = Date.now(); S.hand = S.picked.slice().sort((a, b) => a - b); S.phase = 'choose'; render(); window.scrollTo(0, 0); return; }
   if (t.dataset.info) { showTip(S.deck.abilities.map(k => `${k}: ${ABILITIES[k]}`).join('\n')); return; }
   if (t.dataset.abil && S.phase === 'choose') {
     const k = t.dataset.abil;

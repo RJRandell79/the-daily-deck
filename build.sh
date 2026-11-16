@@ -8,6 +8,7 @@ echo '<!DOCTYPE html><html lang="en-GB"><head><meta charset="utf-8"><meta name="
 cat src/style.css
 echo '</style></head><body><main id="app"></main><div id="bar"></div><div id="tip" role="status"></div><script>'
 cat src/engine.js
+cat src/log.js
 cat src/ui.js
 echo '</script></body></html>'
 } > dist/index.html

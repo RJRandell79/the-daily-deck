@@ -111,3 +111,9 @@ summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--acc)}
 .seg{display:inline-flex;border:2px solid var(--acc);border-radius:10px;overflow:hidden}
 .seg button{font:inherit;font-weight:800;border:0;background:#fff;color:var(--acc);padding:8px 14px;cursor:pointer}
 .seg button.on{background:var(--acc);color:#fff}
+.logstatus{font-size:13px;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid var(--line)}
+.logstatus.ready{border-color:var(--win);color:var(--win);font-weight:600}
+.logstatus.readonly,.logstatus.local,.logstatus.error{border-color:#ead7a0;background:#fff6dc;color:var(--ink)}
+.unsynced{color:var(--gold);font-weight:800}
+.tbl small{color:var(--muted)}
+textarea.csv{width:100%;font:12px/1.3 ui-monospace,Menlo,monospace;border:1px solid var(--line);border-radius:8px;padding:6px;margin-top:8px}

@@ -1,6 +1,6 @@
 {
   "name": "the-daily-deck",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "description": "A daily tactical card game — placeholder-numbers prototype",
   "scripts": {
