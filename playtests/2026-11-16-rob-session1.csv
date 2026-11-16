@@ -1,0 +1,9 @@
+playedAt,version,boost,mode,deck,replay,rule,abilities,hand,stars,R1,R2,R3,R4,R5,total,careful,perfect,topTrumps,pctPerfect,draftSecs,gameSecs
+"2026-11-16T18:06:35.791Z","v0.2.3","3","daily","2026-11-16","","Underdog","Scout Switch Shield","ABDEGJKL","3","J·Gri●✓+24","K·Gri+Scout●✓+22","B·Ran●✓+22","E·Gri●✓+20","A·Spe●✓+22","110","44","118","24","93","34","127"
+"2026-11-16T18:08:54.157Z","v0.2.3","3","practice","afv2qs","","Low Ball","Scout Boost Shield","ABDEFHIK","3","I·Gri+Scout●✓+24","H·Gri●✓+22","B·Ran●✓+22","D·Pow●✓+30","F·Pow●✗-10","88","142","142","29","62","42","116"
+"2026-11-16T18:15:07.103Z","v0.2.3","3","practice","bqcdfg","","Range Surge","Scout Switch Shield","BCEFGIKL","2","B·Ran●✗-10","C·Spe●✗-10","E·Spe●✗-10","F·Gri●✓+22","I·Ran●✗-10","-18","155","198","12","-9","49","112"
+"2026-11-16T19:04:35.548Z","v0.2.3","3","practice","9y38qy","","Low Ball","Scout Switch Shield","CDEGHIKL","3","I·Pow●✓+24","E·Gri+Scout●✓+22","K·Spe●✓+26","L·Pow●✓+22","H·Ran●✓+24","118","121","134","34","88","122","2955"
+"2026-11-16T19:07:24.505Z","v0.2.3","3","practice","fbnppd","","Rotation","Scout Switch Boost","ABCFHIJK","3","K·Gri●✓+22","C·Pow●✓+26","H·Ran+Boost●✓+24","A·Spe●=-10","F·Pow+Scout✗0","62","94","134","46","46","60","161"
+"2026-11-16T19:09:36.308Z","v0.2.3","3","practice","g8zmf7","","Grand Finale","Scout Switch Shield","BDEGHIJK","1","I·Spe●✓+22","E·Ran●✓+26","K·Gri+Scout●✓+22","B·Spe+Switch●✓+22","J·Gri+Shield●✓+66","158","128","164","37","96","35","112"
+"2026-11-16T19:11:46.618Z","v0.2.3","3","practice","mf6yg6","","Low Ball","Scout Switch Boost","CEFGHJKL","1","F·Gri+Scout●✓+22","C·Gri●✓+26","L·Ran●✗-10","E·Ran+Switch●=-10","H·Gri+Boost●✓+22","50","113","136","35","37","21","109"
+"2026-11-16T19:13:43.710Z","v0.2.3","3","practice","u22vx2","","Underdog","Scout Boost Shield","ABCDEFGI","3","F·Spe●✓+26","C·Spe+Scout●✓+26","G·Gri●✓+22","E·Gri●✓+26","D·Pow+Boost●✓+24","124","126","126","23","98","34","106"

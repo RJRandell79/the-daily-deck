@@ -19,6 +19,8 @@ A daily tactical card game. Everyone gets the same cards and faces the same hous
 | `sim/lab.js` | Runs 400 random decks through the bots and prints scores by rule and ability metrics. |
 | `sim/experiment.js` | Controlled Boost experiments (E1, E2). |
 | `sim/e3.js`, `sim/e3-timing.js` | Stake-limit experiment E3 and its timing control. |
+| `sim/stake-regret.js` | For logged 2-stake games: the best stake placement given the player's own plays, and the timing cost. |
+| `playtests/` | Raw CSV exports from playtest sessions. |
 | `docs/gameplay.md` | Gameplay design document. |
 
 ## Commands
