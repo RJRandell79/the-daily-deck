@@ -126,7 +126,7 @@ textarea.csv{width:100%;font:12px/1.3 ui-monospace,Menlo,monospace;border:1px so
 .stake:disabled{opacity:.4;cursor:default}
 </style></head><body><main id="app"></main><div id="bar"></div><div id="tip" role="status"></div><script>
 // ===== The Daily Deck — game engine v0.2 (no DOM) =====
-const VERSION = 'v0.2.4';
+const VERSION = 'v0.2.5';
 const ATTRS = ['Power', 'Speed', 'Range', 'Grit'];
 const SHORT = ['PWR', 'SPD', 'RNG', 'GRT'];
 const ABIL_KEYS = ['Scout', 'Switch', 'Boost', 'Shield'];
@@ -403,7 +403,8 @@ function gameId() { return Date.now().toString(36) + '-' + Math.random().toStrin
 function buildRecord(S) {
   const now = new Date();
   return {
-    id: gameId(), v: VERSION, boost: CFG.boost, maxStakes: CFG.maxStakes || null, mode: S.mode, code: S.code || null, seed: S.seed,
+    id: gameId(), v: VERSION, boost: CFG.boost, maxStakes: CFG.maxStakes || null, finaleMult: S.deck.condition.type === 'finale' ? CFG.finaleMult : null,
+    stakesLeftAtR5: CFG.maxStakes ? CFG.maxStakes - S.log.slice(0, 4).filter(l => l.staked).length : null, mode: S.mode, code: S.code || null, seed: S.seed,
     day: todayStr(), playedAt: now.toISOString(), replay: S.mode === 'daily' && !!(S.record && S.record.startsWith('Replay')),
     rule: S.deck.condition.name, ruleType: S.deck.condition.type, abilities: S.deck.abilities.slice(),
     hand: S.hand.map(i => S.deck.pool[i].id), stars: S.hand.filter(i => S.deck.pool[i].star).length,
@@ -477,10 +478,10 @@ function fmtDate(iso) { const d = new Date(iso); return d.toLocaleDateString('en
 function roundShort(x) { const o = { win: '✓', tie: '=', loss: '✗' }[x.outcome]; return `${x.card}·${x.attr.slice(0, 3)}${x.ability ? '+' + x.ability : ''}${x.staked ? '●' : ''}${o}${x.pts > 0 ? '+' : ''}${x.pts}`; }
 
 function gamesCsv(games) {
-  const head = ['playedAt', 'version', 'boost', 'stakeLimit', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'stakedRounds', 'carefulStakedRounds', 'perfectStakedRounds', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
+  const head = ['playedAt', 'version', 'boost', 'stakeLimit', 'finaleMult', 'stakesLeftAtR5', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'stakedRounds', 'carefulStakedRounds', 'perfectStakedRounds', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
   const q = s => `"${String(s).replace(/"/g, '""')}"`;
   const sr = a => (a || []).map(r => 'R' + r).join(' ');
-  const rows = games.map(g => [g.playedAt, g.v, g.boost, g.maxStakes || 'unlimited', g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), sr(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)), sr(g.carefulStakedRounds), sr(g.perfectStakedRounds), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs].map(q).join(','));
+  const rows = games.map(g => [g.playedAt, g.v, g.boost, g.maxStakes || 'unlimited', g.finaleMult ?? '', g.stakesLeftAtR5 ?? '', g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), sr(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)), sr(g.carefulStakedRounds), sr(g.perfectStakedRounds), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs].map(q).join(','));
   return [head.join(','), ...rows].join('\n');
 }
 
@@ -513,8 +514,9 @@ function allTestersHtml() {
   const all = Cloud.all.flatMap(p => p.games.map(g => ({ ...g, player: p.name })));
   if (!all.length) return '<p class="note">No games in the shared log yet.</p>';
   const avg = (arr, f) => arr.length ? Math.round(arr.reduce((s, x) => s + (f(x) || 0), 0) / arr.length) : '—';
-  const settings = [...new Set(all.map(x => `Boost +${x.boost} · ${x.maxStakes ? x.maxStakes + ' stakes' : 'unlimited stakes'}`))];
-  const byBoost = settings.map(k => { const g = all.filter(x => `Boost +${x.boost} · ${x.maxStakes ? x.maxStakes + ' stakes' : 'unlimited stakes'}` === k); return `<tr><td>${k}</td><td>${g.length}</td><td>${avg(g, x => x.total)}</td><td>${avg(g, x => x.pctPerfect)}%</td><td>${avg(g, x => x.draftSecs)}s</td></tr>`; }).join('');
+  const setting = x => `Boost +${x.boost} · ${x.maxStakes ? x.maxStakes + ' stakes' : 'unlimited stakes'}${x.finaleMult ? ' · Finale ×' + x.finaleMult : ''}`;
+  const settings = [...new Set(all.map(setting))];
+  const byBoost = settings.map(k => { const g = all.filter(x => setting(x) === k); return `<tr><td>${k}</td><td>${g.length}</td><td>${avg(g, x => x.total)}</td><td>${avg(g, x => x.pctPerfect)}%</td><td>${avg(g, x => x.draftSecs)}s</td></tr>`; }).join('');
   return `<h3>All testers</h3>
     <table class="tbl"><thead><tr><th>Tester</th><th>Games</th><th>Avg score</th><th>Avg % perfect</th><th>Avg draft</th></tr></thead><tbody>
     ${Cloud.all.map(p => `<tr><td>${escapeHtml(p.name)}</td><td>${p.games.length}</td><td>${avg(p.games, x => x.total)}</td><td>${avg(p.games, x => x.pctPerfect)}%</td><td>${avg(p.games, x => x.draftSecs)}s</td></tr>`).join('')}
@@ -564,6 +566,9 @@ function load() { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } 
 function save(d) { try { localStorage.setItem(STORE, JSON.stringify(d)); } catch (e) { } }
 CFG.boost = load().boost === 2 ? 2 : 3;
 CFG.maxStakes = load().maxStakes === 2 ? 2 : null;
+// Candidate rules (D23): two stakes per game come with Grand Finale ×2. Default rules keep ×3.
+function applyStakeRules() { CFG.finaleMult = CFG.maxStakes ? 2 : 3; }
+applyStakeRules();
 const stakesLeft = () => CFG.maxStakes == null ? null : CFG.maxStakes - S.stakesUsed;
 const fmtRounds = a => a && a.length ? a.map(r => 'R' + r).join(', ') : 'none';
 
@@ -737,6 +742,7 @@ function doneView() {
       <li>When did you use each ability — and why then?</li>
       <li>Did staking feel exciting, or just risky?</li>
       <li>Would you play tomorrow’s deck? Would you send your result to someone?</li>
+      ${cond().type === 'finale' && CFG.maxStakes ? '<li><b>Grand Finale:</b> did saving (or not saving) a stake for round 5 feel like a dramatic decision — or like a gamble on the whole game?</li>' : ''}
     </ol></details>
   </section>`;
 }
@@ -745,7 +751,7 @@ function labView() {
   return `<details class="lab" id="labbox"><summary>Balance lab</summary>
     <p>Plays random decks with the bots: scores by rule, plus how each ability is used and what it’s worth. “Contribution” = the careful bot’s score with the ability minus its score without it.</p>
     <div class="expbox"><b>Experiment E1 — Boost size</b><span>Applies to new games and lab runs.</span><div class="seg"><button class="${CFG.boost === 3 ? 'on' : ''}" data-boost="3">Boost +3</button><button class="${CFG.boost === 2 ? 'on' : ''}" data-boost="2">Boost +2</button></div></div>
-    <div class="expbox"><b>Experiment E3 — Stakes per game</b><span>Applies to new games and lab runs. The test log records which rounds you stake.</span><div class="seg"><button class="${CFG.maxStakes == null ? 'on' : ''}" data-stakes="0">Unlimited</button><button class="${CFG.maxStakes === 2 ? 'on' : ''}" data-stakes="2">2 per game</button></div></div>
+    <div class="expbox"><b>Candidate rules — stakes &amp; Grand Finale</b><span>Default: unlimited stakes, Grand Finale ×3. Candidate: 2 stakes per game, Grand Finale ×2. Applies to new games and lab runs; the test log records which rounds you stake.</span><div class="seg"><button class="${CFG.maxStakes == null ? 'on' : ''}" data-stakes="0">Default</button><button class="${CFG.maxStakes === 2 ? 'on' : ''}" data-stakes="2">2 stakes · Finale ×2</button></div></div>
     <button class="btn sec" id="lab">Run 100 decks (Boost +${CFG.boost}, ${CFG.maxStakes ? CFG.maxStakes + ' stakes' : 'unlimited stakes'})</button><div id="labout"></div>
     <div id="mine">${myStatsHtml()}</div></details>`;
 }
@@ -888,7 +894,7 @@ document.addEventListener('click', e => {
   if (t.dataset.go === 'replay') { newGame(S.mode, S.code); return; }
   if (t.dataset.go === 'daily') { location.hash = 'daily'; return; }
   if (t.id === 'lab') { runLabUI(); return; }
-  if (t.dataset.stakes !== undefined) { CFG.maxStakes = +t.dataset.stakes || null; const d = load(); d.maxStakes = CFG.maxStakes; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(CFG.maxStakes ? `Now ${CFG.maxStakes} stakes per game. New game started.` : 'Stakes are unlimited again. New game started.'); return; }
+  if (t.dataset.stakes !== undefined) { CFG.maxStakes = +t.dataset.stakes || null; applyStakeRules(); const d = load(); d.maxStakes = CFG.maxStakes; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(CFG.maxStakes ? `Candidate rules on: ${CFG.maxStakes} stakes per game, Grand Finale ×2. New game started.` : 'Default rules: unlimited stakes, Grand Finale ×3. New game started.'); return; }
   if (t.dataset.boost) { CFG.boost = +t.dataset.boost; const d = load(); d.boost = CFG.boost; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(`Boost is now +${CFG.boost}. New game started.`); return; }
 });
 

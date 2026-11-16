@@ -11,7 +11,8 @@ function gameId() { return Date.now().toString(36) + '-' + Math.random().toStrin
 function buildRecord(S) {
   const now = new Date();
   return {
-    id: gameId(), v: VERSION, boost: CFG.boost, maxStakes: CFG.maxStakes || null, mode: S.mode, code: S.code || null, seed: S.seed,
+    id: gameId(), v: VERSION, boost: CFG.boost, maxStakes: CFG.maxStakes || null, finaleMult: S.deck.condition.type === 'finale' ? CFG.finaleMult : null,
+    stakesLeftAtR5: CFG.maxStakes ? CFG.maxStakes - S.log.slice(0, 4).filter(l => l.staked).length : null, mode: S.mode, code: S.code || null, seed: S.seed,
     day: todayStr(), playedAt: now.toISOString(), replay: S.mode === 'daily' && !!(S.record && S.record.startsWith('Replay')),
     rule: S.deck.condition.name, ruleType: S.deck.condition.type, abilities: S.deck.abilities.slice(),
     hand: S.hand.map(i => S.deck.pool[i].id), stars: S.hand.filter(i => S.deck.pool[i].star).length,
@@ -85,10 +86,10 @@ function fmtDate(iso) { const d = new Date(iso); return d.toLocaleDateString('en
 function roundShort(x) { const o = { win: '✓', tie: '=', loss: '✗' }[x.outcome]; return `${x.card}·${x.attr.slice(0, 3)}${x.ability ? '+' + x.ability : ''}${x.staked ? '●' : ''}${o}${x.pts > 0 ? '+' : ''}${x.pts}`; }
 
 function gamesCsv(games) {
-  const head = ['playedAt', 'version', 'boost', 'stakeLimit', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'stakedRounds', 'carefulStakedRounds', 'perfectStakedRounds', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
+  const head = ['playedAt', 'version', 'boost', 'stakeLimit', 'finaleMult', 'stakesLeftAtR5', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'stakedRounds', 'carefulStakedRounds', 'perfectStakedRounds', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
   const q = s => `"${String(s).replace(/"/g, '""')}"`;
   const sr = a => (a || []).map(r => 'R' + r).join(' ');
-  const rows = games.map(g => [g.playedAt, g.v, g.boost, g.maxStakes || 'unlimited', g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), sr(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)), sr(g.carefulStakedRounds), sr(g.perfectStakedRounds), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs].map(q).join(','));
+  const rows = games.map(g => [g.playedAt, g.v, g.boost, g.maxStakes || 'unlimited', g.finaleMult ?? '', g.stakesLeftAtR5 ?? '', g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), sr(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)), sr(g.carefulStakedRounds), sr(g.perfectStakedRounds), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs].map(q).join(','));
   return [head.join(','), ...rows].join('\n');
 }
 
@@ -121,8 +122,9 @@ function allTestersHtml() {
   const all = Cloud.all.flatMap(p => p.games.map(g => ({ ...g, player: p.name })));
   if (!all.length) return '<p class="note">No games in the shared log yet.</p>';
   const avg = (arr, f) => arr.length ? Math.round(arr.reduce((s, x) => s + (f(x) || 0), 0) / arr.length) : '—';
-  const settings = [...new Set(all.map(x => `Boost +${x.boost} · ${x.maxStakes ? x.maxStakes + ' stakes' : 'unlimited stakes'}`))];
-  const byBoost = settings.map(k => { const g = all.filter(x => `Boost +${x.boost} · ${x.maxStakes ? x.maxStakes + ' stakes' : 'unlimited stakes'}` === k); return `<tr><td>${k}</td><td>${g.length}</td><td>${avg(g, x => x.total)}</td><td>${avg(g, x => x.pctPerfect)}%</td><td>${avg(g, x => x.draftSecs)}s</td></tr>`; }).join('');
+  const setting = x => `Boost +${x.boost} · ${x.maxStakes ? x.maxStakes + ' stakes' : 'unlimited stakes'}${x.finaleMult ? ' · Finale ×' + x.finaleMult : ''}`;
+  const settings = [...new Set(all.map(setting))];
+  const byBoost = settings.map(k => { const g = all.filter(x => setting(x) === k); return `<tr><td>${k}</td><td>${g.length}</td><td>${avg(g, x => x.total)}</td><td>${avg(g, x => x.pctPerfect)}%</td><td>${avg(g, x => x.draftSecs)}s</td></tr>`; }).join('');
   return `<h3>All testers</h3>
     <table class="tbl"><thead><tr><th>Tester</th><th>Games</th><th>Avg score</th><th>Avg % perfect</th><th>Avg draft</th></tr></thead><tbody>
     ${Cloud.all.map(p => `<tr><td>${escapeHtml(p.name)}</td><td>${p.games.length}</td><td>${avg(p.games, x => x.total)}</td><td>${avg(p.games, x => x.pctPerfect)}%</td><td>${avg(p.games, x => x.draftSecs)}s</td></tr>`).join('')}

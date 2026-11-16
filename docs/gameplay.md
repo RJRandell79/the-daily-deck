@@ -1,6 +1,6 @@
 # The Daily Deck — Gameplay Design Document
 
-> **Status:** Living document · **Current version:** v0.2.4 (placeholder-numbers prototype)
+> **Status:** Living document · **Current version:** v0.2.5 (placeholder-numbers prototype)
 > **Last updated:** 16 Nov 2026
 > **Prototype:** https://claude.ai/artifact/9dszi39qzrajPPTgUntgRo
 
@@ -217,11 +217,13 @@ Each house card shows exactly one clue.
 
 One rule is picked per day.
 
+> **Candidate ruleset (D23, being playtested):** 2 stakes per game, and Grand Finale ×2. The default rules below are unchanged until the candidate is settled.
+
 | Rule | Effect | Tactical consequence |
 |---|---|---|
 | **Stat Surge** (e.g. Speed Surge) | Rounds won on that stat score ×2. | Pulls the draft and play towards one stat. |
 | **Rotation** | You can't compare the same stat in two consecutive rounds. | Forces a balanced draft and planning ahead. |
-| **Grand Finale** | Round 5 scores ×3, including negative scores. | Save a strong card, and perhaps an ability, for the end. |
+| **Grand Finale** | Round 5 scores ×3, including negative scores. **Candidate rules: ×2** (D23). | Save a strong card, an ability and, under the candidate rules, a stake for the end. |
 | **Low Ball** | In one named round (2–4), the **lower** number wins. | Draft at least one card with a very low stat. |
 | **Underdog** | Ties count as wins (with a margin of 0). | Makes exact-value clues more valuable. |
 
@@ -487,7 +489,7 @@ With the v0.1 strengths applied to the v0.2 draft and ability rules, the careful
 
 **Recommendation:** E4a (Finale ×2) is the better fit for the design principles. It keeps "do I hold a stake for the finale?" as a real decision while cutting the swing. E4b turns the finale into a no-risk bonus.
 
-**Status:** 🔄 Results in. Decision pending (Rob).
+**Status:** ✅ E4a adopted as a **candidate rule** (D23): Grand Finale ×2 under the two-stake rules. Not yet settled: needs 10–15 more human games (§19.4). E4b rejected because it removes the decision.
 
 ### 12.9 Human signal: declining to stake
 
@@ -583,6 +585,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
+| D23 | 16 Nov 2026 | **Candidate ruleset:** 2 stakes per game with Grand Finale ×2 (E3 + E4a). Treated as a proper candidate, not a provisional experiment. Default rules unchanged until settled after **10–15 more human games**. | E3 made staking a decision. E4a keeps the round-5 stake decision but cuts the swing by about a third. Goal: *a dramatic final decision, not a final-round lottery.* | 🔄 Candidate, playtesting (§19.4) |
 | D22 | 16 Nov 2026 | Test two Grand Finale fixes separately under E3 rules: E4a (×2) and E4b (×3 not stacking with a stake). | A staked ×3 round 5 dominated Rob's Finale games. | ✅ Run (§12.8). E4a recommended, pending decision |
 | D21 | 16 Nov 2026 | Playtest E3 (2 stakes) in the prototype, recording which rounds each player stakes alongside the careful and perfect choices for the same deck. | The bot can't exploit stake timing (§12.7), so human allocation is the real test of E3. | 🔄 First session done (§19.3). Needs fresh testers. |
 | D20 | 16 Nov 2026 | Test a stake limit as E3, with a control: E3a (2 stakes, bot chooses when) against E3b (2 stakes, forced into R1–R2). The perfect bot optimises its allocation under the limit. Record which rounds get staked. | Separates the effect of *limiting* stakes from the effect of *choosing when* to use them. | ✅ Run. Results in §12.7 |
@@ -593,6 +596,12 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 ---
 
 ## 16. Change log
+
+### v0.2.5 — 16 Nov 2026
+- **Candidate rules (D23):** the Balance lab toggle is now **Default** (unlimited stakes, Grand Finale ×3) or **2 stakes · Finale ×2**. Choosing the candidate sets the Finale multiplier to ×2 for new games, the bots and lab runs. A lost round-5 stake on Finale days now costs −20 rather than −30.
+- **Test log:** records `finaleMult` (on Grand Finale days) and `stakesLeftAtR5` (stakes still held going into round 5). Both are new CSV columns, and the all-testers summary groups by Finale multiplier.
+- **Tester questions:** on Grand Finale days under the candidate rules, an extra question asks whether saving (or not saving) a stake for round 5 felt like a dramatic decision or a gamble on the whole game.
+- Default rules unchanged.
 
 ### Simulation tools — 16 Nov 2026 (E4; no change to the playable rules)
 - Engine options: `finaleMult` (default 3), `finaleStacksWithStake` (default true), and `forceRule` (to generate decks with one rule only).
@@ -706,7 +715,7 @@ These are the current values in the v0.2 prototype (`CFG` in the engine).
 
 ## 18. Open questions
 
-1. **Grand Finale with stakes:** a staked ×3 round 5 swings about ±60 points and decided Rob's three worst E3 games (§19.3). E4 (§12.8) suggests Finale ×2 (E4a) keeps the decision while cutting the swing. Stopping the stacking (E4b) removes the decision altogether. Decision pending.
+1. **Grand Finale with stakes:** a staked ×3 round 5 swings about ±60 points and decided Rob's three worst E3 games (§19.3). Finale ×2 (E4a) is now the candidate rule (D23). Does holding a stake for round 5 feel like a dramatic decision rather than a lottery? See §19.4.
 2. **Staking (E3):** two stakes per game creates a real timing decision in principle (worth +10, or +34 on Grand Finale, under perfect play), but our bot can't exploit it. Do humans save stakes for the right rounds? And what should happen to Switch and Shield, which lose almost all their value under E3?
 3. **Ability usage by humans:** Switch and Shield were left unused in most early games (§19.2). Saved deliberately, forgotten, or not valued?
 4. **Boost (E1, E2):** +2 is the leading candidate. Does it feel right in play? How often do people decline to stake with it (§12.9)? E2 showed the stake drives Boost's value, but removing it also removes a decision.
@@ -847,3 +856,21 @@ Raw data: `playtests/2026-11-16-rob-session2.csv`. Timing analysis: `node sim/st
 3. **Grand Finale dominates.** A staked round 5 under ×3 swings about ±60 points, which outweighs everything else in the game. All three Finale games were Rob's worst (12–70% of perfect), and the careful bot outscored him on two of them. **Open question:** is a ×3 staked finale good drama or too much of a lottery? Options to test later (one at a time): Finale ×2, or the Finale multiplier not stacking with stakes.
 4. **Rob stakes early, like the bot.** 63% of his stakes went in R1–R2, against 19% for perfect play. The best placement for his own plays varied widely, though, so "late is better" isn't a rule. Perfect play stakes late partly because it plays differently.
 5. **Caveat:** Rob designed the game and had seen the E3 analysis. His behaviour changed noticeably between sessions: in two unlimited games he staked only 2 and 3 rounds (against 39 of 40 in session 1), and he used far more abilities. Fresh testers are needed before drawing firm conclusions.
+
+### 19.4 What to watch: candidate rules (D23), next 10–15 games
+
+**Goal:** *a dramatic final decision, not a final-round lottery.*
+
+The central question is whether a player feels **comfortable saving a stake for round 5**: confident it's valuable, without feeling the whole game rests on it.
+
+| Signal | Where it comes from | Healthy looks like |
+|---|---|---|
+| Held a stake into R5 on Finale days | `stakesLeftAtR5` | Often, but not always: a real choice that varies with the hand and clues |
+| Staked R5 on Finale days | `stakedRounds` | Some of the time. Players back it when the clue or hand supports it |
+| R5 stake success | R5 result on Finale days | Mostly successful. A failure hurts, but doesn't wipe out the game |
+| Share of score decided by R5 | R5 points ÷ total | Large but not decisive. Finale games no longer consistently the worst |
+| Finale games against the rest | % of perfect, Finale vs other days | Gap narrows from 37% vs 81% (§19.3) |
+| Timing cost on Finale days | `sim/stake-regret.js` (with `FINALE_MULT=2`) | Well below the 96 points over 3 games seen under ×3 |
+| How it felt | Grand Finale tester question | "Dramatic decision" rather than "gamble on the whole game" |
+
+Fresh testers are especially valuable here (see the caveat in §19.3).

@@ -7,6 +7,9 @@ function load() { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } 
 function save(d) { try { localStorage.setItem(STORE, JSON.stringify(d)); } catch (e) { } }
 CFG.boost = load().boost === 2 ? 2 : 3;
 CFG.maxStakes = load().maxStakes === 2 ? 2 : null;
+// Candidate rules (D23): two stakes per game come with Grand Finale ×2. Default rules keep ×3.
+function applyStakeRules() { CFG.finaleMult = CFG.maxStakes ? 2 : 3; }
+applyStakeRules();
 const stakesLeft = () => CFG.maxStakes == null ? null : CFG.maxStakes - S.stakesUsed;
 const fmtRounds = a => a && a.length ? a.map(r => 'R' + r).join(', ') : 'none';
 
@@ -180,6 +183,7 @@ function doneView() {
       <li>When did you use each ability — and why then?</li>
       <li>Did staking feel exciting, or just risky?</li>
       <li>Would you play tomorrow’s deck? Would you send your result to someone?</li>
+      ${cond().type === 'finale' && CFG.maxStakes ? '<li><b>Grand Finale:</b> did saving (or not saving) a stake for round 5 feel like a dramatic decision — or like a gamble on the whole game?</li>' : ''}
     </ol></details>
   </section>`;
 }
@@ -188,7 +192,7 @@ function labView() {
   return `<details class="lab" id="labbox"><summary>Balance lab</summary>
     <p>Plays random decks with the bots: scores by rule, plus how each ability is used and what it’s worth. “Contribution” = the careful bot’s score with the ability minus its score without it.</p>
     <div class="expbox"><b>Experiment E1 — Boost size</b><span>Applies to new games and lab runs.</span><div class="seg"><button class="${CFG.boost === 3 ? 'on' : ''}" data-boost="3">Boost +3</button><button class="${CFG.boost === 2 ? 'on' : ''}" data-boost="2">Boost +2</button></div></div>
-    <div class="expbox"><b>Experiment E3 — Stakes per game</b><span>Applies to new games and lab runs. The test log records which rounds you stake.</span><div class="seg"><button class="${CFG.maxStakes == null ? 'on' : ''}" data-stakes="0">Unlimited</button><button class="${CFG.maxStakes === 2 ? 'on' : ''}" data-stakes="2">2 per game</button></div></div>
+    <div class="expbox"><b>Candidate rules — stakes &amp; Grand Finale</b><span>Default: unlimited stakes, Grand Finale ×3. Candidate: 2 stakes per game, Grand Finale ×2. Applies to new games and lab runs; the test log records which rounds you stake.</span><div class="seg"><button class="${CFG.maxStakes == null ? 'on' : ''}" data-stakes="0">Default</button><button class="${CFG.maxStakes === 2 ? 'on' : ''}" data-stakes="2">2 stakes · Finale ×2</button></div></div>
     <button class="btn sec" id="lab">Run 100 decks (Boost +${CFG.boost}, ${CFG.maxStakes ? CFG.maxStakes + ' stakes' : 'unlimited stakes'})</button><div id="labout"></div>
     <div id="mine">${myStatsHtml()}</div></details>`;
 }
@@ -331,7 +335,7 @@ document.addEventListener('click', e => {
   if (t.dataset.go === 'replay') { newGame(S.mode, S.code); return; }
   if (t.dataset.go === 'daily') { location.hash = 'daily'; return; }
   if (t.id === 'lab') { runLabUI(); return; }
-  if (t.dataset.stakes !== undefined) { CFG.maxStakes = +t.dataset.stakes || null; const d = load(); d.maxStakes = CFG.maxStakes; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(CFG.maxStakes ? `Now ${CFG.maxStakes} stakes per game. New game started.` : 'Stakes are unlimited again. New game started.'); return; }
+  if (t.dataset.stakes !== undefined) { CFG.maxStakes = +t.dataset.stakes || null; applyStakeRules(); const d = load(); d.maxStakes = CFG.maxStakes; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(CFG.maxStakes ? `Candidate rules on: ${CFG.maxStakes} stakes per game, Grand Finale ×2. New game started.` : 'Default rules: unlimited stakes, Grand Finale ×3. New game started.'); return; }
   if (t.dataset.boost) { CFG.boost = +t.dataset.boost; const d = load(); d.boost = CFG.boost; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(`Boost is now +${CFG.boost}. New game started.`); return; }
 });
 
