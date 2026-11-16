@@ -18,6 +18,7 @@ A daily tactical card game. Everyone gets the same cards and faces the same hous
 | `build.sh` | Combines `src/` into a single self-contained `dist/index.html`. |
 | `sim/lab.js` | Runs 400 random decks through the bots and prints scores by rule and ability metrics. |
 | `sim/experiment.js` | Controlled Boost experiments (E1, E2). |
+| `sim/e3.js`, `sim/e3-timing.js` | Stake-limit experiment E3 and its timing control. |
 | `docs/gameplay.md` | Gameplay design document. |
 
 ## Commands
@@ -28,6 +29,8 @@ npm run lab                                  # balance report, 400 decks
 node sim/experiment.js 3 400                 # Boost +3 baseline
 node sim/experiment.js 2 400                 # E1: Boost +2
 node sim/experiment.js 3 400 nostake         # E2: no staking on Boost rounds
+node sim/e3.js baseline|e3a|e3b 400          # E3: two stakes per game (a = bot chooses, b = forced R1–R2)
+node sim/e3-timing.js                        # E3: value of stake timing under perfect play
 ```
 
 There are no dependencies: you only need Node 18+ and bash.

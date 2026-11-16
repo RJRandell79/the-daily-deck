@@ -374,14 +374,89 @@ With the v0.1 strengths applied to the v0.2 draft and ability rules, the careful
 
 **Status:** 🔄 Diagnostic. Not adopted. Keep normal staking with +2 as the leading candidate (D16).
 
-### 12.7 Human signal: declining to stake
+### 12.7 Experiment E3 — Two stakes per game (16 Nov 2026)
+
+**Why:** in Rob's first 8 playtest games, he staked 39 of 40 rounds (§19.2). The maths agrees with him. A staked win pays double and a staked loss costs only 10, so staking pays whenever the chance of winning is above about 45%. A careful bot that stakes every round beats the selective one (107 against 103 on average, and at least as well on 73% of decks). **Staking has stopped being a decision.**
+
+**Hypothesis:** limiting stakes to two per game turns staking into an opportunity-cost decision: *is this round worth one of my two chances, or will I need it later?*
+
+**Method:** the same 400 decks. Only the stake rule changes; Boost stays at +3 and everything else is held constant.
+- **Baseline:** unlimited stakes (current rules).
+- **E3a:** at most 2 stakes. The careful bot plans its whole game on its estimates, including where to stake. It stakes when the plan says so and it's confident, or when it would otherwise waste a stake.
+- **E3b (control):** at most 2 stakes, which the bot must spend in rounds 1 and 2.
+- **The perfect bot** knows the 2-stake limit in both versions and chooses the best rounds for its stakes.
+
+| Measure | Baseline (unlimited) | **E3a (2, chosen)** | E3b (2, forced R1–R2) |
+|---|---|---|---|
+| Careful bot average | 103 | **82** | 81 |
+| Perfect average | 153 | **116** | 116 |
+| Top Trumps average (never stakes) | 42 | 42 | 42 |
+| Careful ÷ perfect | 67% | **70%** | 70% |
+| Top Trumps ÷ perfect | 27% | **36%** | 36% |
+| Stakes used per game (careful) | 3.7 | 2.0 | 2.0 |
+| Games using both stakes | — | 95% | 100% |
+| Stake success rate (careful) | 87% | **84%** | 87% |
+
+**Which rounds get the stakes:**
+
+| Round | R1 | R2 | R3 | R4 | R5 |
+|---|---|---|---|---|---|
+| Careful bot, E3a | 28% | 30% | 26% | 12% | **4%** |
+| Perfect bot, 2 stakes | 11% | 17% | 20% | 22% | **30%** |
+
+**Careful ÷ perfect by rule (Top Trumps ÷ perfect in brackets):**
+
+| Rule | Baseline | E3a | E3b |
+|---|---|---|---|
+| Rotation | 64% (30%) | 72% (41%) | 72% (41%) |
+| Underdog | 74% (32%) | 79% (44%) | 79% (44%) |
+| Low Ball | 78% (25%) | 80% (34%) | 79% (34%) |
+| Stat Surge | 65% (24%) | 70% (32%) | 70% (32%) |
+| Grand Finale | 60% (26%) | **58% (32%)** | 58% (32%) |
+
+**Abilities alongside stakes (careful bot):**
+
+| Ability | Contribution: baseline → E3a | Staked when used: baseline → E3a |
+|---|---|---|
+| Scout | +11.1 → +8.7 | 49% → 33% |
+| Switch | +6.2 → **+0.1** | 100% → 86% |
+| Boost | +21.2 → **+10.0** | 97% → 16% |
+| Shield | +5.3 → **0.0** | 100% → 54% |
+
+**Value of timing under perfect play.** This is the perfect bot choosing its stake rounds freely, against having them forced into R1–R2 (`sim/e3-timing.js`):
+
+| Rule | Free timing | Forced R1–R2 | Value of timing |
+|---|---|---|---|
+| Rotation | 91 | 89 | +2 |
+| Underdog | 94 | 92 | +2 |
+| Low Ball | 104 | 100 | +5 |
+| Stat Surge | 140 | 132 | +8 |
+| **Grand Finale** | 152 | 118 | **+34** |
+| **All decks** | 116 | 106 | **+10** |
+
+**Findings:**
+
+1. **The bot couldn't make use of timing.** E3a and E3b produce almost identical careful scores (82 against 81). The bot spends 84% of its stakes in rounds 1–3 because it sees an acceptable margin early. That's exactly the risk Rob identified.
+2. **But timing is genuinely valuable.** With perfect knowledge, choosing when to stake is worth about +10 points per game, and far more on multiplier days: **+34 on Grand Finale**, +8 on Stat Surge. Perfect play saves stakes for later (52% in R4–R5). So the opportunity-cost decision E3 aims for does exist. Our bot just can't see it, and humans are needed to test it. *Playtest evidence:* in game 6 (Grand Finale), Rob saved a Shield-backed stake for round 5 and scored +66.
+3. **Skill still matters, but the spread narrows.** Careful play scores about twice Top Trumps (82 against 42), down from about 2.5×. Top Trumps ÷ perfect rises to 36%, partly because perfect scores fall when stakes are limited.
+4. **Stakes stay safe rather than risky.** The success rate barely moves (87% → 84%). Two stakes make staking *scarce*, not *uncertain*. Whether scarcity alone creates enough tension is a question for playtesting.
+5. **E3 hollows out Switch and Shield.** Their value was bound up with staking, and with only two stakes they contribute about nothing. **This conflicts with §2.3:** an ability that's never worth taking is pointless. Boost falls to +10, no longer an outlier. If E3 is adopted, Switch and Shield will need redesigning, as separate follow-up experiments.
+6. **Grand Finale is now the hardest day for careful play (58% of perfect)**, because it rewards holding a stake for round 5.
+
+**Caveats:**
+- The careful bot's stake allocation is simplistic: it treats its estimates as certain and spends stakes early. A smarter allocation bot, or human data, is needed before judging E3a properly.
+- Ability contributions under E3 depend partly on the bot's fixed ability rules.
+
+**Status:** 🔄 Promising but not decided. Next: playtest a 2-stake version (and consider a smarter bot that values saving stakes).
+
+### 12.8 Human signal: declining to stake
 
 The bot's rules are fixed, so it can't show whether people *perceive* the same risk. From v0.2.2 the prototype records, per ability, how often **players use the ability but choose not to stake**. It's shown under "Your games in this browser" in the Balance lab, with Boost split into +3 and +2.
 
 - A high decline rate with Boost would suggest players see Boost as a safety tool rather than a stake multiplier. If so, E1's and E2's bot-based numbers overstate its real-world value.
 - From v0.2.3, every game is also saved in full to the shared test log (§19.1), so this can be measured across all testers.
 
-### 12.8 Historical — v0.1 (400 decks, 8 fixed cards, abilities built into cards)
+### 12.9 Historical — v0.1 (400 decks, 8 fixed cards, abilities built into cards)
 
 | | Top Trumps | Careful bot | Perfect |
 |---|---|---|---|
@@ -468,6 +543,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
+| D20 | 16 Nov 2026 | Test a stake limit as E3, with a control: E3a (2 stakes, bot chooses when) against E3b (2 stakes, forced into R1–R2). The perfect bot optimises its allocation under the limit. Record which rounds get staked. | Separates the effect of *limiting* stakes from the effect of *choosing when* to use them. | ✅ Run. Results in §12.7 |
 | D19 | 16 Nov 2026 | Log every test game in full to a shared database (with a copy on the device), so results survive across devices and can be analysed together. | Playtest evidence is what settles open questions such as D16. Browser-only data was being lost. | ✅ Decided (in prototype v0.2.3) |
 
 *Add new decisions with the next number. If a decision is reversed, mark it ❌ Superseded and reference the new entry rather than deleting it.*
@@ -475,6 +551,13 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 ---
 
 ## 16. Change log
+
+### Simulation tools — 16 Nov 2026 (no change to the playable prototype)
+- The engine supports an optional stake limit (`maxStakes`) and a stake policy for the careful bot (`careful` or `first`).
+- The perfect solver optimises stake allocation under a limit, and can restrict stakes to given rounds.
+- The careful bot records every round (staked, outcome, ability) for analysis.
+- New scripts: `sim/e3.js` (baseline, E3a, E3b) and `sim/e3-timing.js` (the value of stake timing).
+- Baseline results reproduce exactly (careful 103.0, perfect 153.2).
 
 ### v0.2.3 — 16 Nov 2026
 - **Shared test log (D19):** every finished game is saved in full (§19.1): on the device, and to the prototype's shared database when the player can write to it. Games saved while offline upload later.
@@ -563,17 +646,19 @@ These are the current values in the v0.2 prototype (`CFG` in the engine).
 
 ## 18. Open questions
 
-1. **Boost (E1, E2):** +2 is the leading candidate. Does it feel right in play? How often do people decline to stake with it (§12.7)? E2 showed the stake drives Boost's value, but removing it also removes a decision.
-2. **Is Shield interesting**, or just a free stake that gets spent late?
-3. **Does the draft feel like a decision or a chore?** Does it stay within about a minute?
-4. **Is staking exciting or punishing?** Staked ties cost 10 unless shielded.
-5. **Should daily rules be normalised** so scores are comparable across days? Perfect currently ranges from 125 (Rotation) to 186 (Grand Finale).
-6. **Do humans use abilities differently from the bot?** Do they save them, or leave them unused?
-7. **Are clues readable at a glance?**
-8. **Rivalries or global leaderboard:** which drives day-3 return?
-9. **Contextual value measurement:** needed before designing the collection.
-10. **What gives the game its identity** beyond the mechanics: name, tone, card presentation?
-11. **Theme for the first real deck** once the mechanics are settled.
+1. **Staking (E3):** two stakes per game creates a real timing decision in principle (worth +10, or +34 on Grand Finale, under perfect play), but our bot can't exploit it. Do humans save stakes for the right rounds? And what should happen to Switch and Shield, which lose almost all their value under E3?
+2. **Ability usage by humans:** Switch and Shield were left unused in most early games (§19.2). Saved deliberately, forgotten, or not valued?
+3. **Boost (E1, E2):** +2 is the leading candidate. Does it feel right in play? How often do people decline to stake with it (§12.8)? E2 showed the stake drives Boost's value, but removing it also removes a decision.
+4. **Is Shield interesting**, or just a free stake that gets spent late?
+5. **Does the draft feel like a decision or a chore?** Does it stay within about a minute?
+6. **Is staking exciting or punishing?** Staked ties cost 10 unless shielded.
+7. **Should daily rules be normalised** so scores are comparable across days? Perfect currently ranges from 125 (Rotation) to 186 (Grand Finale).
+8. **Do humans use abilities differently from the bot?** Do they save them, or leave them unused?
+9. **Are clues readable at a glance?**
+10. **Rivalries or global leaderboard:** which drives day-3 return?
+11. **Contextual value measurement:** needed before designing the collection.
+12. **What gives the game its identity** beyond the mechanics: name, tone, card presentation?
+13. **Theme for the first real deck** once the mechanics are settled.
 
 ### 18.1 Suggestions to consider
 
@@ -600,7 +685,14 @@ Record each session here. Ask testers the questions on the prototype's end scree
 
 | Date | Version | Boost | Tester | Deck (daily / code) | Score | Perfect | Understood by R1? | Draft time | Abilities used (round) | Staked with Boost? | Notable moments | Would return? |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| | | | | | | | | | | | | |
+| 16 Nov 2026 | v0.2.3 | +3 | Rob | Daily (Underdog) | 110 | 118 | — | 34s | Scout (R2) | — | Beat the careful bot (44). Staked all 5. | — |
+| 16 Nov 2026 | v0.2.3 | +3 | Rob | afv2qs (Low Ball) | 88 | 142 | — | 42s | Scout (R1) | Boost unused | Staked all 5; lost the R5 stake. Boost and Shield unused. | — |
+| 16 Nov 2026 | v0.2.3 | +3 | Rob | bqcdfg (Range Surge) | −18 | 198 | — | 49s | None | — | Staked all 5, lost 4. Switch and Shield unused; either would have saved at least 10. | — |
+| 16 Nov 2026 | v0.2.3 | +3 | Rob | 9y38qy (Low Ball) | 118 | 134 | — | 122s* | Scout (R2) | — | *Game left open for about 49 minutes. Staked all 5. | — |
+| 16 Nov 2026 | v0.2.3 | +3 | Rob | fbnppd (Rotation) | 62 | 134 | — | 60s | Boost (R3), Scout (R5) | Yes | Scout in R5 revealed bad news, so he declined to stake: the only unstaked round. | — |
+| 16 Nov 2026 | v0.2.3 | +3 | Rob | g8zmf7 (Grand Finale) | 158 | 164 | — | 35s | Scout (R3), Switch (R4), Shield (R5) | — | 96% of perfect. Shield-backed stake on the ×3 finale: +66. | — |
+| 16 Nov 2026 | v0.2.3 | +3 | Rob | mf6yg6 (Low Ball) | 50 | 136 | — | 21s | Scout (R1), Switch (R4), Boost (R5) | Yes | Two failed stakes (R3, R4). | — |
+| 16 Nov 2026 | v0.2.3 | +3 | Rob | u22vx2 (Underdog) | 124 | 126 | — | 34s | Scout (R2), Boost (R5) | Yes | 98% of perfect. Shield unused. | — |
 
 ### 19.1 The shared test log
 
@@ -625,3 +717,24 @@ From v0.2.3, every finished game is recorded automatically.
 - Players must be signed in to Claude.
 
 **Analysis:** the owner can view and copy every tester's games from the Test log panel, or ask Claude to read the shared log directly.
+
+### 19.2 Findings — Rob, 8 games, 16 Nov 2026 (v0.2.3, Boost +3)
+
+| Measure | Result |
+|---|---|
+| Average % of perfect | 64% (range −9% to 98%) |
+| Against careful bot | Beat it 2×, within 3 points 2×, behind 4× |
+| Against Top Trumps bot | Beat it in 7 of 8 |
+| Rounds staked | **39 of 40** |
+| Round win rate | 78% (31 of 40) |
+| Staked rounds that failed | 8 of 39 (21%) |
+| Draft time | Median about 38s (one outlier) ✅ within the 1-minute target |
+| Game time | About 2 minutes ✅ |
+| Abilities used when dealt | Scout 7/8 · Boost 3/4 · Switch 2/6 · Shield 1/6 |
+| Declined to stake with Boost | 0 of 3 |
+
+**Takeaways:**
+- **Staking isn't a decision at present.** Staking nearly every round is the correct play under current scoring. That led to E3 (§12.7).
+- **Humans leave abilities unused**, unlike the bot, which always spends them. Switch and Shield were mostly unused. Bot ability figures overstate real-world value.
+- **Scout worked as designed:** the one declined stake came straight after Scout revealed bad news.
+- **Timing was used well once:** on the Grand Finale deck, a Shield-backed stake was saved for the ×3 round.

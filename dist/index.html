@@ -131,7 +131,7 @@ const ABILITIES = {
   Shield: 'If you lose or tie this round while staked, you lose nothing.'
 };
 const CFG = {
-  rounds: 5, boostCap: null, boostNoStake: false, pool: 12, hand: 8, starCount: 5, starLimit: 3, abilitiesDealt: 3,
+  rounds: 5, boostCap: null, boostNoStake: false, maxStakes: null, stakePolicy: 'careful', pool: 12, hand: 8, starCount: 5, starLimit: 3, abilitiesDealt: 3,
   win: 10, tie: 5, stakeLoss: 10, boost: 3, stakeThreshold: 2,
   card: { total: [18, 22], min: 1, max: 8 },
   house: { total: [28, 34], min: 4, max: 10 }
@@ -228,13 +228,14 @@ function scoreRound(deck, { card, attr, staked, round, ability }, houseStats) {
 
 // Exhaustive search. allowed = bitmask of playable cards. boostAvail: whether Boost may still be used.
 // With perfect information only Boost changes outcomes (Scout/Switch add information you already have; Shield never matters).
-function solve(deck, start, { allowed, stake = true, boostAvail = false, houseOverride = null, starLimit = 99 } = {}) {
+function solve(deck, start, { allowed, stake = true, boostAvail = false, houseOverride = null, starLimit = 99, maxStakes = Infinity, stakeRounds = null } = {}) {
   const memo = new Map(); const rot = deck.condition.type === 'rotation';
-  const stakes = stake ? [false, true] : [false];
-  const keyOf = (round, mask, last, b) => ((round * 4096 + mask) * 5 + (last + 1)) * 2 + (b ? 1 : 0);
-  function rec(round, mask, last, b) {
+  const keyOf = (round, mask, last, b, su) => (((round * 4096 + mask) * 5 + (last + 1)) * 2 + (b ? 1 : 0)) * 8 + Math.min(su, 7);
+  function rec(round, mask, last, b, su) {
     if (round === CFG.rounds) return { pts: 0 };
-    const key = keyOf(round, mask, last, b); const m = memo.get(key); if (m) return m;
+    if (maxStakes === Infinity) su = 0; // the count only matters when stakes are limited
+    const key = keyOf(round, mask, last, b, su); const m = memo.get(key); if (m) return m;
+    const stakes = stake && su < maxStakes && (!stakeRounds || stakeRounds.includes(round)) ? [false, true] : [false];
     let best = { pts: -Infinity };
     const starsUsed = bitCount(mask & deck.starMask);
     for (let c = 0; c < CFG.pool; c++) {
@@ -244,25 +245,26 @@ function solve(deck, start, { allowed, stake = true, boostAvail = false, houseOv
         if (rot && a === last) continue;
         for (const ab of (b ? [null, 'Boost'] : [null])) for (const st of stakes) {
           const r = scoreRound(deck, { card: c, attr: a, staked: st, round, ability: ab }, houseOverride && houseOverride[round]);
-          const tot = r.pts + rec(round + 1, mask | (1 << c), a, b && ab !== 'Boost').pts;
+          const tot = r.pts + rec(round + 1, mask | (1 << c), a, b && ab !== 'Boost', su + (st ? 1 : 0)).pts;
           if (tot > best.pts) best = { pts: tot, move: { card: c, attr: a, staked: st, ability: ab } };
         }
       }
     }
     memo.set(key, best); return best;
   }
-  const res = rec(start.round, start.mask, start.last, boostAvail);
-  const line = []; let s = { ...start }, b = boostAvail;
+  const su0 = start.su || 0;
+  const res = rec(start.round, start.mask, start.last, boostAvail, su0);
+  const line = []; let s = { ...start }, b = boostAvail, su = su0;
   while (s.round < CFG.rounds) {
-    const mv = memo.get(keyOf(s.round, s.mask, s.last, b)).move; line.push({ ...mv, round: s.round });
-    if (mv.ability === 'Boost') b = false;
+    const mv = memo.get(keyOf(s.round, s.mask, s.last, b, maxStakes === Infinity ? 0 : su)).move; line.push({ ...mv, round: s.round });
+    if (mv.ability === 'Boost') b = false; if (mv.staked) su++;
     s = { round: s.round + 1, mask: s.mask | (1 << mv.card), last: mv.attr };
   }
   return { pts: res.pts, line };
 }
 const START = { round: 0, mask: 0, last: -1 };
 const ALL = (1 << CFG.pool) - 1;
-function perfect(deck) { return solve(deck, START, { allowed: ALL, boostAvail: deck.abilities.includes('Boost'), starLimit: CFG.starLimit }); }
+function perfect(deck) { return solve(deck, START, { allowed: ALL, boostAvail: deck.abilities.includes('Boost'), starLimit: CFG.starLimit, maxStakes: CFG.maxStakes ?? Infinity }); }
 
 // What a player can infer about a house card from its clue (+ Scout).
 function estimate(deck, r, scouted) {
@@ -315,10 +317,11 @@ function botCareful(deck, opts = {}) {
   const abilities = (opts.abilities || deck.abilities).slice();
   const hand = opts.hand || carefulDraft(deck);
   const allowed = maskOf(hand);
-  let s = { ...START }; const scouted = [false, false, false, false, false]; let total = 0; const uses = [];
+  let s = { ...START }; const scouted = [false, false, false, false, false]; let total = 0; const uses = []; const rounds = [];
+  const limited = CFG.maxStakes != null; let su = 0;
   const has = a => abilities.includes(a); const useUp = a => abilities.splice(abilities.indexOf(a), 1);
   for (let r = 0; r < CFG.rounds; r++) {
-    const plan = () => { const est = deck.house.map((_, i) => estimate(deck, i, scouted[i])); const p = solve(deck, s, { allowed, stake: false, houseOverride: est }); const mv = p.line[0]; return { mv, est, e: scoreRound(deck, { card: mv.card, attr: mv.attr, staked: false, round: r, ability: null }, est[r]) }; };
+    const plan = () => { const est = deck.house.map((_, i) => estimate(deck, i, scouted[i])); const p = solve(deck, { ...s, su }, limited ? { allowed, stake: true, houseOverride: est, maxStakes: CFG.maxStakes } : { allowed, stake: false, houseOverride: est }); const mv = p.line[0]; return { mv, est, e: scoreRound(deck, { card: mv.card, attr: mv.attr, staked: false, round: r, ability: null }, est[r]) }; };
     let { mv, est, e } = plan();
     const left = CFG.rounds - r, force = abilities.length >= left;
     const clueOnAttr = deck.house[r].clue.type === 'exact' && deck.house[r].clue.attr === mv.attr;
@@ -332,8 +335,14 @@ function botCareful(deck, opts = {}) {
     } else if (has('Shield') && ((e.diff >= 0 && e.diff < CFG.stakeThreshold) || force)) {
       ability = 'Shield'; useUp('Shield'); staked = true;
     } else staked = e.diff >= CFG.stakeThreshold;
+    if (limited) {
+      const stakesLeft = CFG.maxStakes - su;
+      if (CFG.stakePolicy === 'first') staked = stakesLeft > 0; // E3b control: spend them immediately
+      else staked = stakesLeft > 0 && staked && (mv.staked || stakesLeft >= left || ability === 'Switch' || ability === 'Shield');
+    }
+    if (staked) su++;
     const res = scoreRound(deck, { card: mv.card, attr, staked, round: r, ability });
-    total += res.pts;
+    total += res.pts; rounds.push({ round: r, staked, outcome: res.outcome, ability, pts: res.pts });
     if (ability) {
       const u = { ability, round: r, staked, outcome: res.outcome, pts: res.pts };
       if (ability === 'Boost') { const base = scoreRound(deck, { card: mv.card, attr, staked, round: r, ability: null }); u.flip = base.outcome !== 'win' && res.outcome === 'win'; u.gain = res.pts - base.pts; }
@@ -341,16 +350,19 @@ function botCareful(deck, opts = {}) {
     }
     s = { round: r + 1, mask: s.mask | (1 << mv.card), last: attr };
   }
-  return { total, hand, uses };
+  return { total, hand, uses, rounds };
 }
 
 // ---- Balance lab: aggregates over many decks ----
 function runLab(n, seedPrefix) {
-  const out = { n, rules: {}, tt: 0, careful: 0, best: 0, ttBeats: 0, abil: {} };
+  const out = { n, rules: {}, tt: 0, careful: 0, best: 0, ttBeats: 0, abil: {}, stk: { used: 0, wins: 0, byRound: [0, 0, 0, 0, 0], winsByRound: [0, 0, 0, 0, 0], perfectByRound: [0, 0, 0, 0, 0], perfectUsed: 0, gamesAllUsed: 0 } };
   ABIL_KEYS.forEach(k => { out.abil[k] = { dealt: 0, used: 0, roundSum: 0, staked: 0, stakedWins: 0, contrib: 0, flips: 0, stakeSaves: 0, gain: 0 }; });
   for (let i = 0; i < n; i++) {
     const d = generateDeck(seedPrefix + i);
-    const best = perfect(d).pts, tt = botTopTrumps(d), cb = botCareful(d);
+    const pf = perfect(d), best = pf.pts, tt = botTopTrumps(d), cb = botCareful(d);
+    let usedHere = 0; for (const x of cb.rounds) if (x.staked) { usedHere++; out.stk.used++; out.stk.byRound[x.round]++; if (x.outcome === 'win') { out.stk.wins++; out.stk.winsByRound[x.round]++; } }
+    if (CFG.maxStakes != null && usedHere >= CFG.maxStakes) out.stk.gamesAllUsed++;
+    for (const m of pf.line) if (m.staked) { out.stk.perfectUsed++; out.stk.perfectByRound[m.round]++; }
     out.tt += tt.total; out.careful += cb.total; out.best += best; if (tt.total >= cb.total) out.ttBeats++;
     const rk = d.condition.type === 'double' ? 'Stat Surge' : d.condition.name;
     const R = out.rules[rk] = out.rules[rk] || { n: 0, tt: 0, careful: 0, best: 0, ratioSum: 0, boostN: 0, boostContrib: 0, boostFlips: 0 }; R.n++; R.tt += tt.total; R.careful += cb.total; R.best += best; R.ratioSum += best > 0 ? cb.total / best : 0;
