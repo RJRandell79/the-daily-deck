@@ -773,6 +773,11 @@ Record each session here. Ask testers the questions on the prototype's end scree
 | 16 Nov 2026 | v0.2.4 | +3 · **2 stakes** | Rob | 6reh6s (Grand Finale) | 18 | 156 | — | 23s | Boost (R1), Scout (R2), Switch (R5) | Yes | Staked R5 with Switch; tie under Grand Finale = −30. Timing cost 58. | — |
 | 16 Nov 2026 | v0.2.4 | +3 · **2 stakes** | Rob | qrhgc9 (Range Surge) | 101 | 111 | — | 30s | Scout (R3), Switch (R4), Shield (R5) | — | Stake rounds exactly matched perfect (R2, R5). Range Surge stake +48. | — |
 | 16 Nov 2026 | v0.2.4 | +3 · **2 stakes** | Rob | 9kzeq7 (Underdog) | 77 | 96 | — | 30s | Boost (R2), Scout (R3) | Yes | Staked R1, R2; perfect R4, R5. Timing cost 3. | — |
+| 16 Nov 2026 | v0.2.5 | +3 · default | Rob | Daily (Underdog), third play of this deck | 68 | 118 | — | 34s | Scout (R2), Switch (R5) | — | Staked only R2, even with unlimited stakes. Perfect stakes all 5. | — |
+| 16 Nov 2026 | v0.2.5 | +3 · default | Rob | 86hpez (Range Surge) | 140 | 226 | — | 40s | Switch (R1), Boost (R3), Shield (R4) | Yes | Staked R2–R5. Range Surge stakes +52 and +60. | — |
+| 16 Nov 2026 | v0.2.5 | +3 · default | Rob | g88m5s (Low Ball) | 76 | 140 | — | 25s | Scout (R3), Shield (R5) | — | Staked R2–R5; Scout-backed R3 stake failed (−10). | — |
+| 16 Nov 2026 | v0.2.5 | +3 · **candidate** | Rob | g88m5s (Low Ball), same deck again | 90 | 102 | — | 58s | Scout (R1), Switch (R5) | — | 88% of perfect against 54% under default rules on the same deck (second play). Timing cost 1. | — |
+| 16 Nov 2026 | v0.2.5 | +3 · **candidate** | Rob | x2g928 (Low Ball) | 91 | 105 | — | 41s | Boost (R1), Switch (R2), Scout (R3) | Yes | 87% of perfect; careful bot 44. Timing cost 0. | — |
 
 ### 19.1 The shared test log
 
@@ -874,3 +879,12 @@ The central question is whether a player feels **comfortable saving a stake for 
 | How it felt | Grand Finale tester question | "Dramatic decision" rather than "gamble on the whole game" |
 
 Fresh testers are especially valuable here (see the caveat in §19.3).
+
+### 19.5 Findings — Rob, session 3, 16 Nov 2026 (v0.2.5)
+
+Raw data: `playtests/2026-11-16-rob-session3.csv`. Five games: three under the default rules and two under the candidate rules. **No Grand Finale deck came up**, so the main D23 question (§19.4) is still untested.
+
+- **Candidate rules (2 games):** 88% and 87% of perfect. All 4 stakes won. Timing cost 1 point in total; both stake choices were close to the best placement for his plays. Both games spent both stakes before round 5 (`stakesLeftAtR5` = 0), which is expected on non-Finale days.
+- **Same deck, both rules (g88m5s):** default 76 of 140 (54%), then candidate 90 of 102 (88%). The second play benefited from knowing the deck, so this isn't a clean comparison.
+- **Under the default rules, Rob now stakes selectively** (1, 4 and 4 rounds), where perfect play stakes all 5 every time. Unlimited staking still rewards staking everything, so this is learned caution rather than a real decision in the rules. It's another sign the session 1 pattern (39 of 40 staked) has been influenced by seeing the analysis.
+- **Running total towards D23:** 2 games under the full candidate rules, plus 5 earlier two-stake non-Finale games (§19.3) that play identically. **0 Grand Finale games under ×2 so far.**
