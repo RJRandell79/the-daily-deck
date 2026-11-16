@@ -1,0 +1,11 @@
+{
+  "name": "the-daily-deck",
+  "version": "0.2.2",
+  "private": true,
+  "description": "A daily tactical card game — placeholder-numbers prototype",
+  "scripts": {
+    "build": "bash build.sh",
+    "lab": "node sim/lab.js",
+    "experiment": "node sim/experiment.js"
+  }
+}
