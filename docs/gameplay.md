@@ -217,13 +217,13 @@ Each house card shows exactly one clue.
 
 One rule is picked per day.
 
-> **Candidate ruleset (D23, being playtested):** 2 stakes per game, and Grand Finale ×2. The default rules below are unchanged until the candidate is settled.
+> **Two-stake ruleset (D23, leading candidate):** 2 stakes per game, with **Grand Finale ×2 as its settled default** (D25). The prototype's starting rules (unlimited stakes, Grand Finale ×3) are unchanged.
 
 | Rule | Effect | Tactical consequence |
 |---|---|---|
 | **Stat Surge** (e.g. Speed Surge) | Rounds won on that stat score ×2. | Pulls the draft and play towards one stat. |
 | **Rotation** | You can't compare the same stat in two consecutive rounds. | Forces a balanced draft and planning ahead. |
-| **Grand Finale** | Round 5 scores ×3, including negative scores. **Candidate rules: ×2** (D23). | Save a strong card, an ability and, under the candidate rules, a stake for the end. |
+| **Grand Finale** | Round 5 scores ×3, including negative scores. **Two-stake ruleset: ×2** (D25, settled default for that ruleset). | Save a strong card, an ability and, under the candidate rules, a stake for the end. |
 | **Low Ball** | In one named round (2–4), the **lower** number wins. | Draft at least one card with a very low stat. |
 | **Underdog** | Ties count as wins (with a margin of 0). | Makes exact-value clues more valuable. |
 
@@ -489,7 +489,7 @@ With the v0.1 strengths applied to the v0.2 draft and ability rules, the careful
 
 **Recommendation:** E4a (Finale ×2) is the better fit for the design principles. It keeps "do I hold a stake for the finale?" as a real decision while cutting the swing. E4b turns the finale into a no-risk bonus.
 
-**Status:** ✅ E4a adopted as a **candidate rule** (D23): Grand Finale ×2 under the two-stake rules. Not yet settled: needs 10–15 more human games (§19.4). E4b rejected because it removes the decision.
+**Status:** ✅ E4a settled (D25): Grand Finale ×2 is the default for the two-stake ruleset, confirmed by 14 human Finale games (§19.7). E4b rejected because it removes the decision.
 
 ### 12.9 Human signal: declining to stake
 
@@ -585,8 +585,9 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
+| D25 | 17 Nov 2026 | **Grand Finale ×2 is the leading candidate and the default for the two-stake ruleset.** ×3 is kept only for the unlimited-stake rules. | 17 candidate games (14 Grand Finale ×2): Finale days rose from 37% to 70% of perfect, timing cost fell from 32 to about 9 per game, a won finale stake fell from 53–66% to 42–55% of the score, and Rob's feedback was positive (§19.6, §19.7). | ✅ Decided |
 | D24 | 16 Nov 2026 | Add a Grand Finale practice-deck button so Finale ×2 games can be played on demand. | Grand Finale comes up on only about 1 deck in 5, and it's the rule D23 most needs evidence on. | ✅ Done (v0.2.6) |
-| D23 | 16 Nov 2026 | **Candidate ruleset:** 2 stakes per game with Grand Finale ×2 (E3 + E4a). Treated as a proper candidate, not a provisional experiment. Default rules unchanged until settled after **10–15 more human games**. | E3 made staking a decision. E4a keeps the round-5 stake decision but cuts the swing by about a third. Goal: *a dramatic final decision, not a final-round lottery.* | 🔄 Candidate. **Game target met:** 17 games, 14 of them Finale ×2. All signals positive (§19.6, §19.7). Awaiting Rob's call on settling it. |
+| D23 | 16 Nov 2026 | **Candidate ruleset:** 2 stakes per game with Grand Finale ×2 (E3 + E4a). Treated as a proper candidate, not a provisional experiment. Default rules unchanged until settled after **10–15 more human games**. | E3 made staking a decision. E4a keeps the round-5 stake decision but cuts the swing by about a third. Goal: *a dramatic final decision, not a final-round lottery.* | ✅ Finale ×2 settled as the two-stake default (D25). 🔄 Two-stake ruleset itself remains the leading candidate; prototype still starts on unlimited stakes. Fresh testers wanted. |
 | D22 | 16 Nov 2026 | Test two Grand Finale fixes separately under E3 rules: E4a (×2) and E4b (×3 not stacking with a stake). | A staked ×3 round 5 dominated Rob's Finale games. | ✅ Run (§12.8). E4a recommended, pending decision |
 | D21 | 16 Nov 2026 | Playtest E3 (2 stakes) in the prototype, recording which rounds each player stakes alongside the careful and perfect choices for the same deck. | The bot can't exploit stake timing (§12.7), so human allocation is the real test of E3. | 🔄 First session done (§19.3). Needs fresh testers. |
 | D20 | 16 Nov 2026 | Test a stake limit as E3, with a control: E3a (2 stakes, bot chooses when) against E3b (2 stakes, forced into R1–R2). The perfect bot optimises its allocation under the limit. Record which rounds get staked. | Separates the effect of *limiting* stakes from the effect of *choosing when* to use them. | ✅ Run. Results in §12.7 |
@@ -597,6 +598,9 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 ---
 
 ## 16. Change log
+
+### Docs — 17 Nov 2026
+- D25: Grand Finale ×2 settled as the default for the two-stake ruleset. No change to the prototype, which already applies ×2 whenever two stakes are on.
 
 ### v0.2.6 — 16 Nov 2026
 - **Grand Finale practice deck** button (D24): in the Balance lab's candidate-rules box, and on the end screen while the candidate rules are on. Each tap opens a new practice deck whose rule is Grand Finale. These are ordinary decks found by trying random codes, so each one is shareable by its code like any other practice deck. No rules changed.
@@ -719,7 +723,7 @@ These are the current values in the v0.2 prototype (`CFG` in the engine).
 
 ## 18. Open questions
 
-1. **Grand Finale with stakes:** a staked ×3 round 5 swings about ±60 points and decided Rob's three worst E3 games (§19.3). Finale ×2 (E4a) is now the candidate rule (D23). Does holding a stake for round 5 feel like a dramatic decision rather than a lottery? See §19.4.
+1. **Two-stake ruleset as the overall default?** Grand Finale ×2 is settled within it (D25). Should two stakes replace unlimited stakes as the game's default? That needs fresh testers, since all evidence so far is from one player.
 2. **Staking (E3):** two stakes per game creates a real timing decision in principle (worth +10, or +34 on Grand Finale, under perfect play), but our bot can't exploit it. Do humans save stakes for the right rounds? And what should happen to Switch and Shield, which lose almost all their value under E3?
 3. **Switch as a stake partner:** both failed round-5 stakes under the ×3 and early ×2 data were Switch-backed against strong house cards, where every stat lost or tied after the stake was committed (§19.6). Do players assume Switch guarantees a win? Consider an in-game hint.
 4. **Shield and the finale:** a Shield-backed round-5 stake has no downside, and Rob used it on 6 of 11 candidate finale stakes (§19.7). Does Shield-plus-stake become automatic whenever Shield is dealt on a Finale day?
