@@ -217,7 +217,7 @@ Each house card shows exactly one clue.
 
 One rule is picked per day.
 
-> **Two-stake ruleset (D23, leading candidate):** 2 stakes per game, with **Grand Finale ×2 as its settled default** (D25). The prototype's starting rules (unlimited stakes, Grand Finale ×3) are unchanged.
+> **Candidate ruleset v1 (D28):** **2 stakes per game · Grand Finale ×2 · Boost +2 · abilities apply to the round they're played in.** Frozen while it's tested across the normal mix of daily rules (§19.11). The prototype's starting rules (unlimited stakes, Grand Finale ×3, Boost +3) are unchanged; turn on **Boost +2** and **2 stakes · Finale ×2** in the Balance lab to play v1.
 
 | Rule | Effect | Tactical consequence |
 |---|---|---|
@@ -585,7 +585,9 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
-| D26 | 17 Nov 2026 | Next playtest batch: **Boost +2** under the two-stake ruleset (2 stakes, Grand Finale ×2), everything else unchanged. Compare with the +3 baseline from logged games (§19.8). | E1 (§12.5) made +2 the leading Boost candidate but needed human data. One variable at a time (D14). | 🔄 Batch done (§19.10): +2 passes most signals. Awaiting Rob's view on whether it still feels worth using |
+| D28 | 17 Nov 2026 | **Candidate ruleset v1 frozen:** two-stake limit · Grand Finale ×2 · Boost +2 · abilities applied to the round they're played in. No changes to these during the next batch: **10–15 games across the normal mix of daily rules** (daily deck and ordinary practice decks, not the Grand Finale button). | Tests whether the competitive results hold across the wider game, not just on Finale days. | 🔄 Next batch (§19.11) |
+| D27 | 17 Nov 2026 | **Boost +2 adopted into the candidate ruleset.** | Rob: +3 is "overwhelming"; +2 "brings a bit more balance". Data: flip rate 87% → 33%, staked Boost wins 100% → 80%, and stake declines rose to 44% (§19.10). | ✅ Decided |
+| D26 | 17 Nov 2026 | Next playtest batch: **Boost +2** under the two-stake ruleset (2 stakes, Grand Finale ×2), everything else unchanged. Compare with the +3 baseline from logged games (§19.8). | E1 (§12.5) made +2 the leading Boost candidate but needed human data. One variable at a time (D14). | ✅ Done. +2 adopted (D27) |
 | D25 | 17 Nov 2026 | **Grand Finale ×2 is the leading candidate and the default for the two-stake ruleset.** ×3 is kept only for the unlimited-stake rules. | 17 candidate games (14 Grand Finale ×2): Finale days rose from 37% to 70% of perfect, timing cost fell from 32 to about 9 per game, a won finale stake fell from 53–66% to 42–55% of the score, and Rob's feedback was positive (§19.6, §19.7). | ✅ Decided |
 | D24 | 16 Nov 2026 | Add a Grand Finale practice-deck button so Finale ×2 games can be played on demand. | Grand Finale comes up on only about 1 deck in 5, and it's the rule D23 most needs evidence on. | ✅ Done (v0.2.6) |
 | D23 | 16 Nov 2026 | **Candidate ruleset:** 2 stakes per game with Grand Finale ×2 (E3 + E4a). Treated as a proper candidate, not a provisional experiment. Default rules unchanged until settled after **10–15 more human games**. | E3 made staking a decision. E4a keeps the round-5 stake decision but cuts the swing by about a third. Goal: *a dramatic final decision, not a final-round lottery.* | ✅ Finale ×2 settled as the two-stake default (D25). 🔄 Two-stake ruleset itself remains the leading candidate; prototype still starts on unlimited stakes. Fresh testers wanted. |
@@ -601,6 +603,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 ## 16. Change log
 
 ### Docs — 17 Nov 2026
+- D27: Boost +2 adopted. D28: candidate ruleset v1 frozen (2 stakes · Grand Finale ×2 · Boost +2 · abilities apply to the round played). §19.11 sets up the mixed-rule batch. New script `sim/candidate.js` simulates v1 by daily rule.
 - D26 and §19.8: next playtest batch is Boost +2 under the two-stake ruleset, with a +3 baseline from logged games. New script `sim/boost-summary.js`.
 - D25: Grand Finale ×2 settled as the default for the two-stake ruleset. No change to the prototype, which already applies ×2 whenever two stakes are on.
 
@@ -730,7 +733,7 @@ These are the current values in the v0.2 prototype (`CFG` in the engine).
 3. **Switch as a stake partner:** both failed round-5 stakes under the ×3 and early ×2 data were Switch-backed against strong house cards, where every stat lost or tied after the stake was committed (§19.6). Do players assume Switch guarantees a win? Consider an in-game hint.
 4. **Shield and the finale:** a Shield-backed round-5 stake has no downside, and Rob used it on 6 of 11 candidate finale stakes (§19.7). Does Shield-plus-stake become automatic whenever Shield is dealt on a Finale day?
 5. **Ability usage by humans:** Switch and Shield were left unused in most early games (§19.2). Saved deliberately, forgotten, or not valued?
-6. **Boost (E1, E2):** +2 is the leading candidate. Does it feel right in play? How often do people decline to stake with it (§12.9)? E2 showed the stake drives Boost's value, but removing it also removes a decision.
+6. **Boost:** +2 adopted (D27). Watch whether it now feels too modest: in 5 of 9 uses in §19.10 it only added margin to a round already won.
 7. **Is Shield interesting**, or just a free stake that gets spent late?
 8. **Does the draft feel like a decision or a chore?** Does it stay within about a minute?
 9. **Is staking exciting or punishing?** Staked ties cost 10 unless shielded.
@@ -1065,7 +1068,7 @@ Raw data: `playtests/2026-11-17-rob-session7.csv`. Analysis: `node sim/boost-sum
 | Some declines to stake with Boost | 44% declined | ✅ Weighed, not automatic |
 | Points added lower, but still worth using | +32 → +10 | ⚠️ See below |
 | Round used still varies | R2–R5, mostly late | ✅ Now saved rather than opened with |
-| How it felt | *Not yet answered* | ❓ Rob to say |
+| How it felt | Rob: *"Boost +3 is overwhelming, +2 brings a bit more balance."* | ✅ |
 
 **Observations:**
 1. **+2 changes how Boost is used.** At +3 it was mostly spent in rounds 1–2 as a near-guaranteed staked win. At +2 it's held later and staked less than half the time.
@@ -1077,4 +1080,45 @@ Raw data: `playtests/2026-11-17-rob-session7.csv`. Analysis: `node sim/boost-sum
    - Draft median 30s.
 5. **Grand Finale (5 games this batch):** Rob held a stake into round 5 in only 1 of 5, against 7 of 8 in session 5. It's worth asking whether that was deliberate. Across all candidate Finale games (19): 71% of perfect, 12 held stakes, and 9 of 12 round-5 stakes won.
 
-**D26 status:** batch complete. The numbers support +2: it's less dominant and more of a decision. A final call depends on whether Boost still feels worth using.
+**D26 status:** complete. **Boost +2 adopted into the candidate ruleset (D27).**
+
+### 19.11 Next batch: candidate ruleset v1 across the normal rule mix (D28)
+
+**Setup:** Balance lab → **Boost +2** and **2 stakes · Finale ×2**. Check the title shows both tags. Then play the **daily deck** and **New practice deck** only, not the Grand Finale button, so each rule comes up about 1 game in 5. **10–15 games.** No rule changes during the batch.
+
+**What it tests:** whether the competitive results hold across the wider game.
+- Does skill show on every rule, not just Grand Finale?
+- Does any rule make careful play pointless, or make luck dominate?
+- Do the stake and ability decisions stay interesting on ordinary days?
+
+**Bot benchmark for v1** (`node sim/candidate.js 400`, 400 decks):
+
+| Rule | Top Trumps | Careful | Perfect | Careful ÷ perfect | Top Trumps ÷ perfect |
+|---|---|---|---|---|---|
+| Rotation | 35 | 64 | 89 | 72% | 40% |
+| Underdog | 41 | 73 | 92 | 79% | 44% |
+| Low Ball | 34 | 83 | 102 | 81% | 34% |
+| Stat Surge | 44 | 96 | 137 | 70% | 32% |
+| Grand Finale | 42 | 76 | 119 | 64% | 35% |
+| **All** | **39** | **78** | **108** | **72%** | **36%** |
+
+- In simulation, Scout (+9.0) and Boost (+8.3) now add similar value. Switch and Shield add almost nothing *for the bot* (+0.3, +0.4).
+- Humans have found real uses for Shield (§19.7), and Boost behaves differently in human hands (§19.10). Human data matters most here.
+
+**Rob's v1 games so far by rule** (session 7; small numbers):
+
+| Rule | Games | Rob ÷ perfect | Careful ÷ perfect |
+|---|---|---|---|
+| Grand Finale | 5 | 73% | 75% |
+| Stat Surge | 4 | 70% | 75% |
+| Rotation | 3 | 64% | 71% |
+| Low Ball | 2 | 81% | 72% |
+| Underdog | 1 | 94% | 92% |
+
+**Healthy looks like:**
+- Human ÷ perfect reasonably even across rules: no rule consistently far below the others.
+- The careful bot doesn't beat good human play on any one rule as a matter of course.
+- Top Trumps stays well below on every rule.
+- The draft stays around 30 seconds, and games around 2 minutes.
+
+**Analysis after the batch:** `node sim/finale-summary.js`, `sim/boost-summary.js` and `sim/stake-regret.js` (with `FINALE_MULT=2`), plus a by-rule breakdown against the table above.

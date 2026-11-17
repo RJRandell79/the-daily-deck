@@ -22,6 +22,7 @@ A daily tactical card game. Everyone gets the same cards and faces the same hous
 | `sim/e4.js` | Grand Finale experiment E4 (×2, or no stacking with stakes). |
 | `sim/stake-regret.js` | For logged 2-stake games: the best stake placement given the player's own plays, and the timing cost. |
 | `sim/finale-summary.js` | Groups logged Grand Finale games by stake limit and multiplier. |
+| `sim/candidate.js` | Simulates candidate ruleset v1 (2 stakes, Finale ×2, Boost +2) by daily rule. |
 | `sim/boost-summary.js` | Re-scores logged Boost rounds with and without Boost: flip rate, stake use, points added. |
 | `playtests/` | Raw CSV exports from playtest sessions. |
 | `docs/gameplay.md` | Gameplay design document. |
