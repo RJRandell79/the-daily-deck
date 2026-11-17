@@ -21,6 +21,7 @@ A daily tactical card game. Everyone gets the same cards and faces the same hous
 | `sim/e3.js`, `sim/e3-timing.js` | Stake-limit experiment E3 and its timing control. |
 | `sim/e4.js` | Grand Finale experiment E4 (×2, or no stacking with stakes). |
 | `sim/stake-regret.js` | For logged 2-stake games: the best stake placement given the player's own plays, and the timing cost. |
+| `sim/finale-summary.js` | Groups logged Grand Finale games by stake limit and multiplier. |
 | `playtests/` | Raw CSV exports from playtest sessions. |
 | `docs/gameplay.md` | Gameplay design document. |
 
