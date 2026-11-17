@@ -586,7 +586,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
 | D24 | 16 Nov 2026 | Add a Grand Finale practice-deck button so Finale ×2 games can be played on demand. | Grand Finale comes up on only about 1 deck in 5, and it's the rule D23 most needs evidence on. | ✅ Done (v0.2.6) |
-| D23 | 16 Nov 2026 | **Candidate ruleset:** 2 stakes per game with Grand Finale ×2 (E3 + E4a). Treated as a proper candidate, not a provisional experiment. Default rules unchanged until settled after **10–15 more human games**. | E3 made staking a decision. E4a keeps the round-5 stake decision but cuts the swing by about a third. Goal: *a dramatic final decision, not a final-round lottery.* | 🔄 Candidate, playtesting (§19.4) |
+| D23 | 16 Nov 2026 | **Candidate ruleset:** 2 stakes per game with Grand Finale ×2 (E3 + E4a). Treated as a proper candidate, not a provisional experiment. Default rules unchanged until settled after **10–15 more human games**. | E3 made staking a decision. E4a keeps the round-5 stake decision but cuts the swing by about a third. Goal: *a dramatic final decision, not a final-round lottery.* | 🔄 Candidate, playtesting (§19.4). 9 games so far, 6 of them Finale ×2 (§19.6) |
 | D22 | 16 Nov 2026 | Test two Grand Finale fixes separately under E3 rules: E4a (×2) and E4b (×3 not stacking with a stake). | A staked ×3 round 5 dominated Rob's Finale games. | ✅ Run (§12.8). E4a recommended, pending decision |
 | D21 | 16 Nov 2026 | Playtest E3 (2 stakes) in the prototype, recording which rounds each player stakes alongside the careful and perfect choices for the same deck. | The bot can't exploit stake timing (§12.7), so human allocation is the real test of E3. | 🔄 First session done (§19.3). Needs fresh testers. |
 | D20 | 16 Nov 2026 | Test a stake limit as E3, with a control: E3a (2 stakes, bot chooses when) against E3b (2 stakes, forced into R1–R2). The perfect bot optimises its allocation under the limit. Record which rounds get staked. | Separates the effect of *limiting* stakes from the effect of *choosing when* to use them. | ✅ Run. Results in §12.7 |
@@ -782,6 +782,14 @@ Record each session here. Ask testers the questions on the prototype's end scree
 | 16 Nov 2026 | v0.2.5 | +3 · default | Rob | g88m5s (Low Ball) | 76 | 140 | — | 25s | Scout (R3), Shield (R5) | — | Staked R2–R5; Scout-backed R3 stake failed (−10). | — |
 | 16 Nov 2026 | v0.2.5 | +3 · **candidate** | Rob | g88m5s (Low Ball), same deck again | 90 | 102 | — | 58s | Scout (R1), Switch (R5) | — | 88% of perfect against 54% under default rules on the same deck (second play). Timing cost 1. | — |
 | 16 Nov 2026 | v0.2.5 | +3 · **candidate** | Rob | x2g928 (Low Ball) | 91 | 105 | — | 41s | Boost (R1), Switch (R2), Scout (R3) | Yes | 87% of perfect; careful bot 44. Timing cost 0. | — |
+| 17 Nov 2026 | v0.2.6 | +3 · default (×3) | Rob | Daily (Grand Finale) | 125 | 198 | — | 36s | Switch (R3), Shield (R5) | — | Staked R1 and the ×3 R5 (Shield-backed, +66). | — |
+| 17 Nov 2026 | v0.2.6 | +3 · **candidate** (×2) | Rob | Daily (Grand Finale), second play | 94 | 129 | — | 34s | none | — | Spent both stakes by R2; none left for R5. Timing cost 11. | — |
+| 17 Nov 2026 | v0.2.6 | +3 · **candidate** (×2) | Rob | z2c86m (Grand Finale) | 94 | 117 | — | 23s | Scout (R1), Switch (R3), Shield (R5) | — | Stakes R1, R4; R5 won unstaked (+26). Timing cost 15. | — |
+| 17 Nov 2026 | v0.2.6 | +3 · **candidate** | Rob | j9mpzs (Underdog) | 57 | 89 | — | 21s | Scout (R3), Switch (R4), Shield (R5) | — | Timing cost 0. | — |
+| 17 Nov 2026 | v0.2.6 | +3 · **candidate** (×2) | Rob | prqqjk (Grand Finale) | 108 | 130 | — | 28s | Switch (R1), Boost (R2), Shield (R5) | Yes | **Held a stake for R5**, Shield-backed, +48. Same stake rounds as perfect play. Timing cost 3. | — |
+| 17 Nov 2026 | v0.2.6 | +3 · **candidate** (×2) | Rob | b3mypt (Grand Finale) | 82 | 118 | — | 26s | Scout (R2), Switch (R3), Boost (R5) | Yes | **Held a stake for R5**, Boost-backed, +44. Timing cost 0. | — |
+| 17 Nov 2026 | v0.2.6 | +3 · **candidate** (×2) | Rob | gxcetx (Grand Finale) | 17 | 111 | — | 21s | Boost (R1), Scout (R4), Switch (R5) | Yes | **Held a stake for R5** with Switch against a Σ31 house card (9/8/8/6). Every stat on card C lost or tied, so −20. Timing cost 41. | — |
+| 17 Nov 2026 | v0.2.6 | +3 · **candidate** (×2) | Rob | fua8j3 (Grand Finale) | 90 | 120 | — | 26s | Scout (R3), Boost (R5) | Yes | **Held a stake for R5**, Boost-backed, +44. Same stake rounds as perfect play. Timing cost 0. | — |
 
 ### 19.1 The shared test log
 
@@ -896,3 +904,28 @@ Raw data: `playtests/2026-11-16-rob-session3.csv`. Five games: three under the d
 - **Same deck, both rules (g88m5s):** default 76 of 140 (54%), then candidate 90 of 102 (88%). The second play benefited from knowing the deck, so this isn't a clean comparison.
 - **Under the default rules, Rob now stakes selectively** (1, 4 and 4 rounds), where perfect play stakes all 5 every time. Unlimited staking still rewards staking everything, so this is learned caution rather than a real decision in the rules. It's another sign the session 1 pattern (39 of 40 staked) has been influenced by seeing the analysis.
 - **Running total towards D23:** 2 games under the full candidate rules, plus 5 earlier two-stake non-Finale games (§19.3) that play identically. **0 Grand Finale games under ×2 so far.**
+
+### 19.6 Findings — Rob, session 4, 17 Nov 2026 (v0.2.6): first Grand Finale ×2 games
+
+Raw data: `playtests/2026-11-17-rob-session4.csv`. Timing analysis: `FINALE_MULT=2 node sim/stake-regret.js playtests/2026-11-17-rob-session4.csv`. All games re-score exactly. The script now also rebuilds daily decks correctly.
+
+**Six Grand Finale games under the candidate rules (×2), measured against the signals in §19.4:**
+
+| Signal | Result | Verdict |
+|---|---|---|
+| Held a stake into R5 | 4 of 6. Not in the first two games; **every game after that** | ✅ A real choice, and one Rob grew into |
+| Staked R5 when holding a stake | 4 of 4 | — |
+| R5 stake success | **3 of 4** (+48, +44, +44; one −20) | ✅ Mostly successful |
+| Share of score from a won R5 stake | 44–54% | ⚠️ Still large |
+| Finale games: % of perfect | **67%** (total), against 37% under ×3 (§19.3) | ✅ Gap closed. No longer consistently the worst days |
+| Timing cost per Finale game | **12** (70 over 6), against 32 under ×3. With the R5 stake held: 3, 0, 41, 0 | ✅ Much lower |
+| Beat the careful bot | 4 of 6 | — |
+| How it felt | *Not yet answered* | ❓ Rob to say |
+
+**Observations:**
+1. **Rob learned to hold a stake for the finale, and it mostly paid.** In his last four Finale games he kept one stake back for round 5. Three won (+48, +44, +44, each backed by Shield or Boost). In two of them his stake rounds matched perfect play exactly.
+2. **A failed finale stake is still the single worst outcome, but it's survivable.** The one failure (gxcetx) cost −20 rather than −30, yet it still produced his worst game (15% of perfect). The swing between a won and a lost staked finale is now about 65 points (+44/+48 against −20), down from about 95 under ×3.
+3. **Every failed round-5 stake in all Finale data was Switch-backed** (6reh6s under ×3; gxcetx under ×2). Both times the house card was strong, every stat on the chosen card lost or tied, and the stake had already been committed before Switch revealed the card. **Switch doesn't guarantee a win.** The clue gave a warning (gxcetx: "Stats add up to 31"). Watch whether players treat Switch as a safe stake partner. A short in-game hint is a possible UI fix, not a rules change.
+4. **The same daily deck under both rules:** default ×3 scored 125 of 198 (63%), then the candidate scored 94 of 129 (73%) on a second play.
+
+**D23 progress:** 9 full candidate-rule games since the target was set (2 in session 3, 7 here), including **6 Grand Finale ×2 games**. That's in reach of the 10–15 target, but all from one player who designed the game. The subjective question in §19.4, whether holding a stake for round 5 feels like a dramatic decision rather than a lottery, still needs Rob's answer. Fresh testers would strengthen the case before settling.

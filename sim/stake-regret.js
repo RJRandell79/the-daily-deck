@@ -15,7 +15,7 @@ for (const l of lines.slice(1)) {
   const v = parse(l); const g = Object.fromEntries(head.map((h, i) => [h, v[i]]));
   if (g.stakeLimit !== '2') continue;
   if (process.env.ONLY_RULE && g.rule !== process.env.ONLY_RULE) continue;
-  E.CFG.boost = +g.boost; const d = E.generateDeck('v02-deck-' + g.deck);
+  E.CFG.boost = +g.boost; const d = E.generateDeck(g.mode === 'daily' ? 'v02-daily-' + g.deck : 'v02-deck-' + g.deck);
   const plays = [0, 1, 2, 3, 4].map(i => { const m = g['R' + (i + 1)].match(/^([A-L])·(\w{3})(?:\+(\w+))?(●)?/); return { card: d.pool.findIndex(c => c.id === m[1]), attr: AT[m[2]], ability: m[3] || null, staked: !!m[4] }; });
   const score = st => plays.reduce((s, p, i) => s + E.scoreRound(d, { card: p.card, attr: p.attr, staked: st.includes(i), round: i, ability: p.ability }).pts, 0);
   const actual = score(plays.map((p, i) => p.staked ? i : -1).filter(i => i >= 0));
