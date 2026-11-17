@@ -585,6 +585,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
+| D26 | 17 Nov 2026 | Next playtest batch: **Boost +2** under the two-stake ruleset (2 stakes, Grand Finale ×2), everything else unchanged. Compare with the +3 baseline from logged games (§19.8). | E1 (§12.5) made +2 the leading Boost candidate but needed human data. One variable at a time (D14). | 🔄 Playtesting |
 | D25 | 17 Nov 2026 | **Grand Finale ×2 is the leading candidate and the default for the two-stake ruleset.** ×3 is kept only for the unlimited-stake rules. | 17 candidate games (14 Grand Finale ×2): Finale days rose from 37% to 70% of perfect, timing cost fell from 32 to about 9 per game, a won finale stake fell from 53–66% to 42–55% of the score, and Rob's feedback was positive (§19.6, §19.7). | ✅ Decided |
 | D24 | 16 Nov 2026 | Add a Grand Finale practice-deck button so Finale ×2 games can be played on demand. | Grand Finale comes up on only about 1 deck in 5, and it's the rule D23 most needs evidence on. | ✅ Done (v0.2.6) |
 | D23 | 16 Nov 2026 | **Candidate ruleset:** 2 stakes per game with Grand Finale ×2 (E3 + E4a). Treated as a proper candidate, not a provisional experiment. Default rules unchanged until settled after **10–15 more human games**. | E3 made staking a decision. E4a keeps the round-5 stake decision but cuts the swing by about a third. Goal: *a dramatic final decision, not a final-round lottery.* | ✅ Finale ×2 settled as the two-stake default (D25). 🔄 Two-stake ruleset itself remains the leading candidate; prototype still starts on unlimited stakes. Fresh testers wanted. |
@@ -600,6 +601,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 ## 16. Change log
 
 ### Docs — 17 Nov 2026
+- D26 and §19.8: next playtest batch is Boost +2 under the two-stake ruleset, with a +3 baseline from logged games. New script `sim/boost-summary.js`.
 - D25: Grand Finale ×2 settled as the default for the two-stake ruleset. No change to the prototype, which already applies ×2 whenever two stakes are on.
 
 ### v0.2.6 — 16 Nov 2026
@@ -972,3 +974,29 @@ Raw data: `playtests/2026-11-17-rob-session5.csv`. Twelve Grand Finale games: 4 
 - **To watch:** a Shield-backed finale stake has no downside. If players hold Shield for the finale every time it's dealt, the decision moves earlier, to whether it's worth keeping both Shield and a stake unused until round 5. That's still a decision, but it should be checked with fresh testers. It argues against changing Shield before more data.
 
 **D23 progress:** 17 full candidate-rule games since the target was set, 14 of them Grand Finale ×2. Every §19.4 signal is positive, and Rob's own feedback is positive (§19.6). **The 10–15 game target is met.** The remaining caveat is that every game so far comes from one player, who designed the game.
+
+### 19.8 Next batch: Boost +2 under the two-stake ruleset (D26)
+
+**Setup:** in the Balance lab, turn on **Boost +2** *and* **2 stakes · Finale ×2**. The tags under the title show both. Boost is dealt on about 3 decks in 4. Nothing else changes.
+
+**+3 baseline from logged games** (`node sim/boost-summary.js playtests/*.csv`). This re-scores every round where Boost was used, with and without it, on the logged deck:
+
+| Ruleset | Games | Boost used when dealt | Staked when used | Staked Boost rounds won | Turned a loss or tie into a win | Points added per use |
+|---|---|---|---|---|---|---|
+| Boost +3 · unlimited stakes | 18 | 9 of 11 (82%) | 67% | 100% | 44% | +17 |
+| **Boost +3 · 2 stakes** | 25 | 15 of 18 (83%) | 80% | **100%** | **87%** | **+32** |
+
+Under the two-stake rules Boost is very decisive in Rob's hands. Almost every use turns a round, and every staked Boost round has won. That's the case for testing +2.
+
+**What to watch with +2:**
+
+| Signal | Healthy looks like |
+|---|---|
+| Turned a loss or tie into a win | Clearly lower than 87%, but well above zero: Boost still often decisive |
+| Staked Boost rounds won | No longer a near-certainty: some risk returns to backing a stake with Boost |
+| Declined to stake with Boost | Some declines suggest Boost is weighed, not automatic |
+| Points added per use | Lower than +32, but enough that using it still feels worth it |
+| Round used | Still varies, including R5 on Finale days |
+| How it felt | Still exciting, not pointless (Rob's test, D16) |
+
+Run `node sim/boost-summary.js playtests/*.csv` after the batch to get the +2 row alongside the baseline.
