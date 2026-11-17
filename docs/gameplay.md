@@ -585,7 +585,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
-| D28 | 17 Nov 2026 | **Candidate ruleset v1 frozen:** two-stake limit · Grand Finale ×2 · Boost +2 · abilities applied to the round they're played in. No changes to these during the next batch: **10–15 games across the normal mix of daily rules** (daily deck and ordinary practice decks, not the Grand Finale button). | Tests whether the competitive results hold across the wider game, not just on Finale days. | 🔄 Next batch (§19.11) |
+| D28 | 17 Nov 2026 | **Candidate ruleset v1 frozen:** two-stake limit · Grand Finale ×2 · Boost +2 · abilities applied to the round they're played in. No changes to these during the next batch: **10–15 games across the normal mix of daily rules** (daily deck and ordinary practice decks, not the Grand Finale button). | Tests whether the competitive results hold across the wider game, not just on Finale days. | ✅ Batch done (§19.12): results hold across rules. Fresh testers needed next |
 | D27 | 17 Nov 2026 | **Boost +2 adopted into the candidate ruleset.** | Rob: +3 is "overwhelming"; +2 "brings a bit more balance". Data: flip rate 87% → 33%, staked Boost wins 100% → 80%, and stake declines rose to 44% (§19.10). | ✅ Decided |
 | D26 | 17 Nov 2026 | Next playtest batch: **Boost +2** under the two-stake ruleset (2 stakes, Grand Finale ×2), everything else unchanged. Compare with the +3 baseline from logged games (§19.8). | E1 (§12.5) made +2 the leading Boost candidate but needed human data. One variable at a time (D14). | ✅ Done. +2 adopted (D27) |
 | D25 | 17 Nov 2026 | **Grand Finale ×2 is the leading candidate and the default for the two-stake ruleset.** ×3 is kept only for the unlimited-stake rules. | 17 candidate games (14 Grand Finale ×2): Finale days rose from 37% to 70% of perfect, timing cost fell from 32 to about 9 per game, a won finale stake fell from 53–66% to 42–55% of the score, and Rob's feedback was positive (§19.6, §19.7). | ✅ Decided |
@@ -730,20 +730,21 @@ These are the current values in the v0.2 prototype (`CFG` in the engine).
 
 1. **Two-stake ruleset as the overall default?** Grand Finale ×2 is settled within it (D25). Should two stakes replace unlimited stakes as the game's default? That needs fresh testers, since all evidence so far is from one player.
 2. **Staking (E3):** two stakes per game creates a real timing decision in principle (worth +10, or +34 on Grand Finale, under perfect play), but our bot can't exploit it. Do humans save stakes for the right rounds? And what should happen to Switch and Shield, which lose almost all their value under E3?
-3. **Switch as a stake partner:** both failed round-5 stakes under the ×3 and early ×2 data were Switch-backed against strong house cards, where every stat lost or tied after the stake was committed (§19.6). Do players assume Switch guarantees a win? Consider an in-game hint.
-4. **Shield and the finale:** a Shield-backed round-5 stake has no downside, and Rob used it on 6 of 11 candidate finale stakes (§19.7). Does Shield-plus-stake become automatic whenever Shield is dealt on a Finale day?
-5. **Ability usage by humans:** Switch and Shield were left unused in most early games (§19.2). Saved deliberately, forgotten, or not valued?
-6. **Boost:** +2 adopted (D27). Watch whether it now feels too modest: in 5 of 9 uses in §19.10 it only added margin to a round already won.
-7. **Is Shield interesting**, or just a free stake that gets spent late?
-8. **Does the draft feel like a decision or a chore?** Does it stay within about a minute?
-9. **Is staking exciting or punishing?** Staked ties cost 10 unless shielded.
-10. **Should daily rules be normalised** so scores are comparable across days? Perfect currently ranges from 125 (Rotation) to 186 (Grand Finale).
-11. **Do humans use abilities differently from the bot?** Do they save them, or leave them unused?
-12. **Are clues readable at a glance?**
-13. **Rivalries or global leaderboard:** which drives day-3 return?
-14. **Contextual value measurement:** needed before designing the collection.
-15. **What gives the game its identity** beyond the mechanics: name, tone, card presentation?
-16. **Theme for the first real deck** once the mechanics are settled.
+3. **Boost +2 against a house 10:** a boosted 8 can only tie a 10, and three staked Boost ties cost −10 each (§19.12). Add a UI hint?
+4. **Switch as a stake partner:** both failed round-5 stakes under the ×3 and early ×2 data were Switch-backed against strong house cards, where every stat lost or tied after the stake was committed (§19.6). Do players assume Switch guarantees a win? Consider an in-game hint.
+5. **Shield and the finale:** a Shield-backed round-5 stake has no downside, and Rob used it on 6 of 11 candidate finale stakes (§19.7). Does Shield-plus-stake become automatic whenever Shield is dealt on a Finale day?
+6. **Ability usage by humans:** Switch and Shield were left unused in most early games (§19.2). Saved deliberately, forgotten, or not valued?
+7. **Boost:** +2 adopted (D27). Watch whether it now feels too modest: in 5 of 9 uses in §19.10 it only added margin to a round already won.
+8. **Is Shield interesting**, or just a free stake that gets spent late?
+9. **Does the draft feel like a decision or a chore?** Does it stay within about a minute?
+10. **Is staking exciting or punishing?** Staked ties cost 10 unless shielded.
+11. **Should daily rules be normalised** so scores are comparable across days? Perfect currently ranges from 125 (Rotation) to 186 (Grand Finale).
+12. **Do humans use abilities differently from the bot?** Do they save them, or leave them unused?
+13. **Are clues readable at a glance?**
+14. **Rivalries or global leaderboard:** which drives day-3 return?
+15. **Contextual value measurement:** needed before designing the collection.
+16. **What gives the game its identity** beyond the mechanics: name, tone, card presentation?
+17. **Theme for the first real deck** once the mechanics are settled.
 
 ### 18.1 Suggestions to consider
 
@@ -834,6 +835,19 @@ Record each session here. Ask testers the questions on the prototype's end scree
 | 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | ejzd87 (Underdog) | 90 | 96 | — | 32s | Switch (R3), Boost (R4) | No | Stakes R1 R3; perfect R1 R5. Boost on a round already won (8 v 7). Timing cost 2. | — |
 | 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | 6jdx42 (Rotation) | 51 | 78 | — | 29s | Scout (R1), Switch (R3) | — | Stakes R1 R4; perfect R2 R4. Timing cost 0. | — |
 | 17 Nov 2026 | v0.2.6 | **+2** · **candidate** (×2) | Rob | kztnv5 (Grand Finale) | 93 | 121 | — | 37s | Scout (R2) | — | Stakes R1 R2; perfect R3 R5. Held a stake into R5: no. Timing cost 13. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes · ×2) | Rob | Daily, repeat play (Grand Finale) | 105 | 125 | — | 30s | Switch (R3), Boost (R4) | No | Stakes R1 R5; perfect R1 R5. Held a stake into R5: yes. Timing cost 4. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes) | Rob | m2txah (Rotation) | 67 | 89 | — | 23s | Scout (R1), Boost (R2), Shield (R5) | No | Stakes R1 R5; perfect R4 R5. Timing cost 1. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes · ×2) | Rob | s2b8js (Grand Finale) | 95 | 128 | — | 29s | Scout (R1), Boost (R3), Shield (R5) | Yes | Stakes R3 R5; perfect R2 R5. Held a stake into R5: yes. Boost-backed stake +28; Shield-backed R5 stake +56. Timing cost 0. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes) | Rob | 3wzu7x (Underdog) | 56 | 90 | — | 39s | Scout (R1), Switch (R2), Shield (R5) | — | Stakes R5; perfect R1 R2. Held both stakes to R5; used only one. Timing cost 16. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes) | Rob | 24nmw2 (Low Ball) | 100 | 106 | — | 22s | Scout (R1), Boost (R5) | No | Stakes R1 R2; perfect R2 R5. Timing cost 4. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes) | Rob | 8fy7b3 (Low Ball) | 77 | 96 | — | 30s | Boost (R1), Scout (R2) | Yes | Stakes R1 R2; perfect R2 R3. Timing cost 4. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes · ×2) | Rob | 8ydshm (Grand Finale) | 15 | 122 | — | 29s | Boost (R3), Switch (R4), Shield (R5) | Yes | Stakes R3 R5; perfect R3 R5. Held a stake into R5: yes. Boost-backed stake tied 9 v 9 (clue: "Strongest stat is Speed"); Shield-backed R5 stake tied (0). Worst game. Timing cost 50. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes · ×2) | Rob | Daily, repeat play (Grand Finale) | 101 | 125 | — | 31s | Boost (R4) | No | Stakes R1 R5; perfect R1 R5. Held a stake into R5: yes. Timing cost 2. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes) | Rob | qjs9zf (Speed Surge) | 85 | 140 | — | 24s | Boost (R1), Switch (R2), Scout (R3) | Yes | Stakes R1 R3; perfect R2 R5. Timing cost 13. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes) | Rob | kacddf (Rotation) | 76 | 96 | — | 29s | Scout (R1), Switch (R5) | — | Stakes R1 R5; perfect R2 R4. Timing cost 4. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes · ×2) | Rob | uqjuh8 (Grand Finale) | 47 | 117 | — | 33s | Scout (R1), Boost (R3) | Yes | Stakes R2 R3; perfect R2 R5. Held a stake into R5: no. Boost-backed stake tied 10 v 10 (8 + 2 against a house 10; clue Σ33), −10. Timing cost 29. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes) | Rob | x7bqge (Low Ball) | 71 | 92 | — | 21s | Scout (R4), Shield (R5) | — | Stakes R4 R5; perfect R3 R5. Timing cost 0. | — |
+| 17 Nov 2026 | v0.2.6 | **v1** (+2 · 2 stakes · ×2) | Rob | 4a3wks (Grand Finale) | 93 | 118 | — | 38s | Scout (R1), Boost (R2), Shield (R5) | No | Stakes R1 R5; perfect R3 R5. Held a stake into R5: yes. Boost tied 10 v 10 (unstaked). Shield-backed R5 stake +48. Timing cost 2. | — |
 
 ### 19.1 The shared test log
 
@@ -1122,3 +1136,39 @@ Raw data: `playtests/2026-11-17-rob-session7.csv`. Analysis: `node sim/boost-sum
 - The draft stays around 30 seconds, and games around 2 minutes.
 
 **Analysis after the batch:** `node sim/finale-summary.js`, `sim/boost-summary.js` and `sim/stake-regret.js` (with `FINALE_MULT=2`), plus a by-rule breakdown against the table above.
+
+### 19.12 Findings — Rob, session 8, 17 Nov 2026 (v0.2.6): candidate ruleset v1 across the rule mix (D28)
+
+Raw data: `playtests/2026-11-17-rob-session8.csv`. Thirteen games, all under v1 (Boost +2 · 2 stakes · Grand Finale ×2). All re-score exactly.
+
+**Rule mix:** Grand Finale came up 6 times, Low Ball 3, Rotation 2, Underdog 1 and Stat Surge 1. Finale is over-represented: today's daily is a Finale deck and was replayed twice, which also means it was well known by then, and 4 practice decks drew it by chance. Combined with session 7 (also v1), there are **28 v1 games** in all.
+
+**By rule: Rob against the careful bot on the same decks, and the v1 simulation benchmark (§19.11):**
+
+| Rule | v1 games | Rob ÷ perfect | Careful on these decks | Beat careful | Top Trumps on these decks | Sim: careful / Top Trumps |
+|---|---|---|---|---|---|---|
+| Low Ball | 5 | **83%** | 80% | 3 of 5 | 25% | 81% / 34% |
+| Underdog | 2 | 78% | 73% | 2 of 2 | 48% | 79% / 44% |
+| Rotation | 5 | 70% | 70% | 2 of 5 | 46% | 72% / 40% |
+| Stat Surge | 5 | 68% | 73% | 2 of 5 | 31% | 70% / 32% |
+| Grand Finale | 11 | 67% | 72% | 7 of 11 | 34% | 64% / 35% |
+| **All** | **28** | **71%** | 73% | **16 of 28** | — | 72% / 36% |
+
+**Against the §19.11 signals:**
+
+| Signal | Result | Verdict |
+|---|---|---|
+| Human ÷ perfect reasonably even across rules | 67–83%, close to the bot on every rule | ✅ |
+| Careful bot doesn't routinely beat good play on one rule | Rob beat it in about half the games on every rule. The careful bot is slightly ahead on Stat Surge and Grand Finale, the two multiplier rules | ✅ (watch multiplier days) |
+| Top Trumps well below on every rule | 25–48% | ✅ Highest on Rotation and Underdog; low sample on Underdog |
+| Draft about 30s, game about 2 min | Medians 29s and 90s | ✅ |
+
+**Observations:**
+1. **The competitive results hold across the rule mix.** Skill shows on every rule. Rob and the careful bot finish within about 5 points of each other everywhere, and naive play falls far behind.
+2. **Multiplier days are still the hardest.** Grand Finale and Stat Surge have the lowest human scores. One mistake on a doubled round costs more. Timing cost was 87 of the 129 points over 13 games on the six Finale games, against 6 per game on other days.
+3. **New pattern: Boost +2 ties.** Four Boost rounds ended in ties, three of them staked (−10 each). Three were 8 + 2 = 10 against a house 10, and one was 7 + 2 = 9 against 9 where the clue said "Strongest stat is Speed". **At +2, a Boost from 8 can only tie a house 10, never beat it.** The clues often warn of this (a strong total, or "Strongest is…"). It's a fair, learnable risk rather than a flaw, but players should be able to see it. A UI hint ("a boosted 10 can only tie a 10") would help, without a rules change.
+4. **Boost +2, all 28 v1 games:** used 19 times, flip rate 37%, staked wins 70%, declined to stake 47%, +10 per use. Consistent with session 7.
+5. **Grand Finale, all candidate games (25):** 69% of perfect. Rob held a stake into round 5 in 17; of the 17 round-5 stakes, 13 won.
+6. **Caveat:** still a single tester, and the same daily deck has now been played three times under v1.
+
+**D28 status:** the 10–15 game target is met (13 this batch, 28 in all under v1). The results support v1 across the rule mix. The main remaining gap is evidence from players other than Rob.
