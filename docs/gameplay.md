@@ -585,7 +585,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
-| D26 | 17 Nov 2026 | Next playtest batch: **Boost +2** under the two-stake ruleset (2 stakes, Grand Finale ×2), everything else unchanged. Compare with the +3 baseline from logged games (§19.8). | E1 (§12.5) made +2 the leading Boost candidate but needed human data. One variable at a time (D14). | 🔄 Not started: session 6 ran +2 under the default stake rules by mistake (§19.9) |
+| D26 | 17 Nov 2026 | Next playtest batch: **Boost +2** under the two-stake ruleset (2 stakes, Grand Finale ×2), everything else unchanged. Compare with the +3 baseline from logged games (§19.8). | E1 (§12.5) made +2 the leading Boost candidate but needed human data. One variable at a time (D14). | 🔄 Batch done (§19.10): +2 passes most signals. Awaiting Rob's view on whether it still feels worth using |
 | D25 | 17 Nov 2026 | **Grand Finale ×2 is the leading candidate and the default for the two-stake ruleset.** ×3 is kept only for the unlimited-stake rules. | 17 candidate games (14 Grand Finale ×2): Finale days rose from 37% to 70% of perfect, timing cost fell from 32 to about 9 per game, a won finale stake fell from 53–66% to 42–55% of the score, and Rob's feedback was positive (§19.6, §19.7). | ✅ Decided |
 | D24 | 16 Nov 2026 | Add a Grand Finale practice-deck button so Finale ×2 games can be played on demand. | Grand Finale comes up on only about 1 deck in 5, and it's the rule D23 most needs evidence on. | ✅ Done (v0.2.6) |
 | D23 | 16 Nov 2026 | **Candidate ruleset:** 2 stakes per game with Grand Finale ×2 (E3 + E4a). Treated as a proper candidate, not a provisional experiment. Default rules unchanged until settled after **10–15 more human games**. | E3 made staking a decision. E4a keeps the round-5 stake decision but cuts the swing by about a third. Goal: *a dramatic final decision, not a final-round lottery.* | ✅ Finale ×2 settled as the two-stake default (D25). 🔄 Two-stake ruleset itself remains the leading candidate; prototype still starts on unlimited stakes. Fresh testers wanted. |
@@ -816,6 +816,21 @@ Record each session here. Ask testers the questions on the prototype's end scree
 | 17 Nov 2026 | v0.2.6 | **+2** · default (×3) | Rob | fm2sua (Grand Finale) | 98 | 188 | — | 36s | Scout (R1), Boost (R5) | Yes | Boost-backed ×3 R5 stake: 6 + 2 = 8 against 6, +72. | — |
 | 17 Nov 2026 | v0.2.6 | **+2** · default | Rob | bb88h8 (Underdog) | 83 | 130 | — | 30s | Scout (R4) | — | Boost not dealt. | — |
 | 17 Nov 2026 | v0.2.6 | **+2** · default | Rob | 4asxb8 (Low Ball) | 93 | 142 | — | 24s | Scout (R1), Switch (R3), Shield (R5) | — | Boost not dealt. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** (×2) | Rob | Daily (Grand Finale) | 105 | 125 | — | 60s | Switch (R3), Boost (R4) | No | Stakes R1 R5; perfect R1 R5. Held a stake into R5: yes. Boost on a round already won (8 v 5). Timing cost 4. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | e9zsdb (Grit Surge) | 96 | 133 | — | 24s | Scout (R1) | — | Stakes R1 R3; perfect R1 R2. Timing cost 1. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | z837vz (Low Ball) | 74 | 107 | — | 44s | Scout (R1), Switch (R3), Boost (R5) | No | Stakes R1 R2; perfect R1 R2. Boost turned an 8 v 8 tie into a win. Timing cost 1. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | ctyu2x (Range Surge) | 115 | 134 | — | 30s | Switch (R1), Boost (R4), Scout (R5) | Yes | Stakes R4 R5; perfect R1 R3. **Boost rescued a staked round:** 8 + 2 = 10 against 9, +44 instead of −10. Timing cost 13. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | eqz8uz (Rotation) | 43 | 92 | — | 41s | Switch (R1), Shield (R4), Boost (R5) | Yes | Stakes R4 R5; perfect R2 R5. **Boost fell short on a stake:** 8 + 2 = 10 against 10, a tie, so −10. At +3 it would have won +22. Timing cost 28. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | a4atsb (Power Surge) | 79 | 154 | — | 34s | Shield (R1), Boost (R3), Switch (R5) | Yes | Stakes R2 R3; perfect R3 R5. Boost on a round already won (7 v 5). Timing cost 0. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | d53zvt (Rotation) | 76 | 95 | — | 25s | Scout (R1), Switch (R3), Boost (R5) | Yes | Stakes R1 R5; perfect R2 R3. Boost on a round already won (8 v 5). Timing cost 1. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** (×2) | Rob | wk4yds (Grand Finale) | 98 | 127 | — | 29s | Scout (R1), Boost (R2), Shield (R5) | Yes | Stakes R1 R2; perfect R2 R5. Held a stake into R5: no. Boost on a round already won (5 v 4). Timing cost 10. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | vk43my (Range Surge) | 85 | 118 | — | 38s | Scout (R1), Switch (R2), Shield (R4) | — | Stakes R2 R3; perfect R2 R4. Timing cost 2. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | qgj27j (Low Ball) | 101 | 108 | — | 26s | Scout (R1), Switch (R2) | — | Stakes R1 R3; perfect R3 R5. Timing cost 2. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** (×2) | Rob | 35zmh6 (Grand Finale) | 64 | 113 | — | 26s | Scout (R1), Switch (R2), Shield (R5) | — | Stakes R1 R3; perfect R3 R5. Held a stake into R5: no. Timing cost 0. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** (×2) | Rob | sesfvh (Grand Finale) | 83 | 121 | — | 26s | Scout (R1), Boost (R4) | No | Stakes R1 R3; perfect R4 R5. Held a stake into R5: no. Boost turned an 8 v 9 loss into a win. Timing cost 13. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | ejzd87 (Underdog) | 90 | 96 | — | 32s | Switch (R3), Boost (R4) | No | Stakes R1 R3; perfect R1 R5. Boost on a round already won (8 v 7). Timing cost 2. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** | Rob | 6jdx42 (Rotation) | 51 | 78 | — | 29s | Scout (R1), Switch (R3) | — | Stakes R1 R4; perfect R2 R4. Timing cost 0. | — |
+| 17 Nov 2026 | v0.2.6 | **+2** · **candidate** (×2) | Rob | kztnv5 (Grand Finale) | 93 | 121 | — | 37s | Scout (R2) | — | Stakes R1 R2; perfect R3 R5. Held a stake into R5: no. Timing cost 13. | — |
 
 ### 19.1 The shared test log
 
@@ -1024,3 +1039,42 @@ Raw data: `playtests/2026-11-17-rob-session6.csv`. Analysis: `node sim/boost-sum
 - **The first logged Boost round that didn't win** (7fa8n6, round 5): 7 + 2 = 9 against a house 10. At +3 it would have tied, and Underdog counts a tie as a win. This is exactly what +2 is meant to change: Boost no longer clears a 10 from an 8 or lower.
 - The other two uses still won. One (fm2sua) turned a round-5 tie into a staked ×3 win of +72.
 - Boost was dealt on only 3 of 6 decks, so collecting enough Boost data needs more games than for the other tests.
+
+### 19.10 Findings — Rob, session 7, 17 Nov 2026 (v0.2.6): Boost +2 under the two-stake ruleset (D26)
+
+Raw data: `playtests/2026-11-17-rob-session7.csv`. Analysis: `node sim/boost-summary.js playtests/*.csv`, which re-scores every Boost round with and without Boost, and at +3. Fifteen games, all under the full candidate rules (2 stakes, Grand Finale ×2), with Boost +2. This is the D26 batch.
+
+**Boost, +3 against +2, both under two stakes:**
+
+| | Boost +3 · 2 stakes (baseline) | **Boost +2 · 2 stakes** |
+|---|---|---|
+| Games | 25 | 15 |
+| Boost used when dealt | 15 of 18 (83%) | 9 of 11 (82%) |
+| Staked when used | 80% | **56%** (declined 44%) |
+| Staked Boost rounds won | 100% | **80%** (4 of 5) |
+| Turned a loss or tie into a win | 87% | **33%** (3 of 9) |
+| Points added per use | +32 | **+10** |
+| Rounds used | Mostly R1–R2 | **R2–R5, mostly R4–R5** |
+
+**Against the §19.8 signals:**
+
+| Signal | Result | Verdict |
+|---|---|---|
+| Flip rate clearly lower, but well above zero | 87% → 33% | ✅ |
+| Staked Boost rounds no longer a near-certainty | 100% → 80%. One staked Boost tied 10 v 10 for −10; at +3 it would have won +22 | ✅ Some risk returns |
+| Some declines to stake with Boost | 44% declined | ✅ Weighed, not automatic |
+| Points added lower, but still worth using | +32 → +10 | ⚠️ See below |
+| Round used still varies | R2–R5, mostly late | ✅ Now saved rather than opened with |
+| How it felt | *Not yet answered* | ❓ Rob to say |
+
+**Observations:**
+1. **+2 changes how Boost is used.** At +3 it was mostly spent in rounds 1–2 as a near-guaranteed staked win. At +2 it's held later and staked less than half the time.
+2. **The risk of Boost feeling pointless is real.** In 5 of 9 uses it was played on a round that would have won anyway (8 v 5, 7 v 5, 8 v 5, 5 v 4, 8 v 7), adding only margin. That's partly because house cards are hidden. Is Boost now a modest top-up that occasionally saves a round, and is that still interesting? That's for Rob's judgement.
+3. **When it mattered, it mattered a lot.** It rescued a staked round (ctyu2x: +44 instead of −10) and turned a loss and a tie into wins.
+4. **Other measures, unchanged by Boost +2:**
+   - Rob scored 73% of perfect and the careful bot 75%. Rob beat the careful bot in 8 of 15.
+   - Timing cost 90 points over 15 games (6 per game).
+   - Draft median 30s.
+5. **Grand Finale (5 games this batch):** Rob held a stake into round 5 in only 1 of 5, against 7 of 8 in session 5. It's worth asking whether that was deliberate. Across all candidate Finale games (19): 71% of perfect, 12 held stakes, and 9 of 12 round-5 stakes won.
+
+**D26 status:** batch complete. The numbers support +2: it's less dominant and more of a decision. A final call depends on whether Boost still feels worth using.
