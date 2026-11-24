@@ -13,9 +13,12 @@ A daily tactical card game. Everyone gets the same cards and faces the same hous
 |---|---|
 | `src/engine.js` | Game rules, deck generation, scoring, solver and benchmark bots. Has no DOM, so it runs in Node too. |
 | `src/log.js` | Test log: saves every finished game on the device and to the prototype's shared database, with CSV export. |
+| `src/remote.js` | itch.io build only: sends finished games and feedback to the Google Sheet, with an on-device outbox for retries. |
 | `src/ui.js` | Browser interface: the draft, rounds, results and Balance lab. |
 | `src/style.css` | Styles. |
-| `build.sh` | Combines `src/` into a single self-contained `dist/index.html`. |
+| `build.sh` | Combines `src/` into a single self-contained `dist/index.html`. `build.sh itch` makes the itch.io playtest build in `dist/itch/` using `itch.config.json`. |
+| `apps-script/Code.gs` | Google Apps Script that receives playtest results into a Sheet (Games and Feedback tabs) and can email a daily summary. |
+| `docs/itch-playtest.md` | Step-by-step guide to publishing the playtest on itch.io. |
 | `sim/lab.js` | Runs 400 random decks through the bots and prints scores by rule and ability metrics. |
 | `sim/experiment.js` | Controlled Boost experiments (E1, E2). |
 | `sim/e3.js`, `sim/e3-timing.js` | Stake-limit experiment E3 and its timing control. |
@@ -30,7 +33,8 @@ A daily tactical card game. Everyone gets the same cards and faces the same hous
 ## Commands
 
 ```bash
-npm run build                                # rebuild dist/index.html
+npm run build                                # rebuild dist/index.html (Claude prototype)
+npm run build:itch                           # itch.io playtest build (needs itch.config.json — see docs/itch-playtest.md)
 npm run lab                                  # balance report, 400 decks
 node sim/experiment.js 3 400                 # Boost +3 baseline
 node sim/experiment.js 2 400                 # E1: Boost +2

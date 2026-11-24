@@ -1,6 +1,7 @@
 // ===== The Daily Deck — test log (local + shared database) =====
 // Every finished game is saved in full: on this device always, and to the artifact's
 // shared database when the viewer is allowed to write there.
+const IS_ITCH = DD_BUILD.mode === 'itch'; // set by build.sh: 'claude' or 'itch'
 const GAMES_KEY = 'dailydeck-games-v1';
 const Cloud = { db: null, user: null, uid: null, status: 'connecting', owner: false, all: null, allStatus: '' };
 
@@ -53,7 +54,7 @@ async function syncPending() {
 
 function logGame(S) {
   const rec = buildRecord(S); const games = localGames(); games.push(rec); saveLocalGames(games);
-  syncPending();
+  if (IS_ITCH) reportGame(rec); else syncPending();
   return rec;
 }
 
@@ -85,12 +86,16 @@ const STATUS_TEXT = {
 function fmtDate(iso) { const d = new Date(iso); return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
 function roundShort(x) { const o = { win: '✓', tie: '=', loss: '✗' }[x.outcome]; return `${x.card}·${x.attr.slice(0, 3)}${x.ability ? '+' + x.ability : ''}${x.staked ? '●' : ''}${o}${x.pts > 0 ? '+' : ''}${x.pts}`; }
 
-function gamesCsv(games) {
-  const head = ['playedAt', 'version', 'boost', 'stakeLimit', 'finaleMult', 'stakesLeftAtR5', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'stakedRounds', 'carefulStakedRounds', 'perfectStakedRounds', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
-  const q = s => `"${String(s).replace(/"/g, '""')}"`;
+const GAME_HEAD = ['playedAt', 'version', 'boost', 'stakeLimit', 'finaleMult', 'stakesLeftAtR5', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'stakedRounds', 'carefulStakedRounds', 'perfectStakedRounds', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
+function gameRowValues(g) {
   const sr = a => (a || []).map(r => 'R' + r).join(' ');
-  const rows = games.map(g => [g.playedAt, g.v, g.boost, g.maxStakes || 'unlimited', g.finaleMult ?? '', g.stakesLeftAtR5 ?? '', g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), sr(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)), sr(g.carefulStakedRounds), sr(g.perfectStakedRounds), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs].map(q).join(','));
-  return [head.join(','), ...rows].join('\n');
+  return [g.playedAt, g.v, g.boost, g.maxStakes || 'unlimited', g.finaleMult ?? '', g.stakesLeftAtR5 ?? '', g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), sr(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)), sr(g.carefulStakedRounds), sr(g.perfectStakedRounds), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs];
+}
+// The same columns as the CSV export, as an object (what the itch.io build sends to the Sheet).
+function gameRowObject(g) { const v = gameRowValues(g); return Object.fromEntries(GAME_HEAD.map((h, i) => [h, v[i]])); }
+function gamesCsv(games) {
+  const q = s => `"${String(s).replace(/"/g, '""')}"`;
+  return [GAME_HEAD.join(','), ...games.map(g => gameRowValues(g).map(q).join(','))].join('\n');
 }
 
 function myGamesTable(games) {
@@ -136,12 +141,12 @@ function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp
 
 function logView() {
   const games = localGames();
-  return `<details class="lab" id="logbox"><summary>Test log</summary>
-    <p class="logstatus ${Cloud.status}">${STATUS_TEXT[Cloud.status]}</p>
+  return `<details class="lab" id="logbox"><summary>${IS_ITCH ? 'Your games' : 'Test log'}</summary>
+    ${IS_ITCH ? remoteStatusHtml() : `<p class="logstatus ${Cloud.status}">${STATUS_TEXT[Cloud.status]}</p>`}
     <h3>My games (${games.length} on this device)</h3>
     ${myGamesTable(games)}
     <div class="btns"><button class="btn sec" id="copymine">Copy my games (CSV)</button>
-    ${Cloud.status === 'ready' && Cloud.owner ? '<button class="btn sec" id="loadall">Load all testers</button>' : ''}</div>
+    ${!IS_ITCH && Cloud.status === 'ready' && Cloud.owner ? '<button class="btn sec" id="loadall">Load all testers</button>' : ''}</div>
     <textarea id="csvout" class="csv" readonly rows="4" hidden></textarea>
     ${Cloud.allStatus ? `<p class="note">${Cloud.allStatus}</p>` : ''}
     <div id="allout">${allTestersHtml()}</div>
@@ -164,4 +169,4 @@ document.addEventListener('click', e => {
   if (t.id === 'copyall' && Cloud.all) copyText(t, gamesCsv(Cloud.all.flatMap(p => p.games.map(g => ({ ...g, code: (g.code || g.day) + ' / ' + p.name })))));
 });
 
-initCloud();
+if (!IS_ITCH) initCloud(); else Cloud.status = 'local';

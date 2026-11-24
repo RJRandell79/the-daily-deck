@@ -10,6 +10,10 @@ CFG.maxStakes = load().maxStakes === 2 ? 2 : null;
 // Candidate rules (D23): two stakes per game come with Grand Finale ×2. Default rules keep ×3.
 function applyStakeRules() { CFG.finaleMult = CFG.maxStakes ? 2 : 3; }
 applyStakeRules();
+// itch.io playtest build: candidate ruleset v1 is fixed (D28) — testers never see the experiment toggles.
+if (IS_ITCH) { CFG.boost = 2; CFG.maxStakes = 2; applyStakeRules(); }
+const showLab = () => !IS_ITCH || devMode();
+const PRIVACY_NOTE = 'This is a playtest. When you finish a game, your result and any feedback you give are sent to the developer with a random tester ID. Nothing else about you is collected; adding a name is optional.';
 const stakesLeft = () => CFG.maxStakes == null ? null : CFG.maxStakes - S.stakesUsed;
 const fmtRounds = a => a && a.length ? a.map(r => 'R' + r).join(', ') : 'none';
 
@@ -27,7 +31,7 @@ function newGame(mode, code) {
     sel: null, attr: null, staked: false, log: [], total: 0, bench: null, record: null, t0: Date.now(), tDraft: null, stakesUsed: 0 };
   render(); window.scrollTo(0, 0);
 }
-function route() { const m = location.hash.match(/^#deck-([a-z0-9]{4,12})$/); if (m) newGame('practice', m[1]); else newGame('daily'); }
+function route() { if (IS_ITCH) setDevFromHash(); const m = location.hash.match(/^#deck-([a-z0-9]{4,12})$/); if (m) newGame('practice', m[1]); else newGame('daily'); }
 
 const cond = () => S.deck.condition;
 const isLow = r => cond().type === 'lowball' && cond().round === r;
@@ -51,10 +55,10 @@ function resultMark(l) { const sym = l.outcome === 'win' ? '✓' : l.outcome ===
 
 function header() {
   return `<header>
-    <div class="brand">The Daily Deck <span class="tag">prototype ${VERSION}</span></div>
+    <div class="brand">The Daily Deck <span class="tag">${IS_ITCH ? 'playtest' : 'prototype'} ${VERSION}</span></div>
     <div class="score">${S.total}<small> pts</small></div>
   </header>
-  <div class="meta">${S.mode === 'daily' ? 'Today’s deck · ' + niceDate() : 'Practice deck · <code>' + S.code + '</code>'}${CFG.boost !== 3 ? ` <span class="tag exp">Boost +${CFG.boost}</span>` : ''}${CFG.maxStakes ? ` <span class="tag exp">${CFG.maxStakes} stakes</span>` : ''}</div>
+  <div class="meta">${S.mode === 'daily' ? 'Today’s deck · ' + niceDate() : 'Practice deck · <code>' + S.code + '</code>'}${!IS_ITCH && CFG.boost !== 3 ? ` <span class="tag exp">Boost +${CFG.boost}</span>` : ''}${!IS_ITCH && CFG.maxStakes ? ` <span class="tag exp">${CFG.maxStakes} stakes</span>` : ''}</div>
   <div class="cond"><b>Today’s rule — ${cond().name}:</b> ${cond().text}</div>
   <details class="rules"><summary>How to play</summary>
     <ul>
@@ -66,6 +70,7 @@ function header() {
       <li><b>Abilities:</b> you get 3 today. Use at most <b>one per round</b>, alongside a card. Unused abilities score nothing.</li>
       <li>One rule changes every day. Everyone gets the same pool, house cards and abilities.</li>
     </ul>
+    ${IS_ITCH ? `<p class="note">${PRIVACY_NOTE}</p>` : ''}
   </details>`;
 }
 
@@ -170,28 +175,44 @@ function doneView() {
       <div><span>Perfect hindsight<small>knew every house card in advance</small></span><b>${b.best}</b></div>
       <div class="you"><span>You</span><b>${S.total}</b></div>
     </div>
+    ${IS_ITCH ? feedbackView() : ''}
     <div class="share"><textarea id="sharetxt" readonly rows="3">${shareText()}</textarea><button class="btn" id="copy">Copy result</button></div>
     <div class="btns">
       <button class="btn" data-go="practice">New practice deck</button>
       <button class="btn sec" data-go="replay">Replay this deck</button>
-      ${CFG.maxStakes ? '<button class="btn sec" data-go="finale">Grand Finale deck</button>' : ''}
+      ${CFG.maxStakes && showLab() ? '<button class="btn sec" data-go="finale">Grand Finale deck</button>' : ''}
       ${S.mode !== 'daily' ? '<button class="btn sec" data-go="daily">Today’s deck</button>' : ''}
     </div>
     <details><summary>Show the perfect line</summary><ol class="line">
       ${b.line.map(m => { const r = scoreRound(S.deck, { card: m.card, attr: m.attr, staked: m.staked, round: m.round, ability: m.ability }); return `<li>${S.deck.pool[m.card].id} · ${ATTRS[m.attr]}${m.ability ? ' + ' + m.ability : ''}${m.staked ? ' (staked)' : ''} — ${r.you} v ${r.them}, ${r.pts > 0 ? '+' : ''}${r.pts}</li>`; }).join('')}
     </ol><p class="note">With perfect knowledge only Boost changes the result, so Scout and Switch never appear here.</p></details>
-    <details class="tester"><summary>Tester questions</summary><ol>
+    ${IS_ITCH ? '' : `<details class="tester"><summary>Tester questions</summary><ol>
       <li>Did you understand what to do by the end of round 1?</li>
       <li>Did the draft feel like a real decision, or a chore?</li>
       <li>When did you use each ability — and why then?</li>
       <li>Did staking feel exciting, or just risky?</li>
       <li>Would you play tomorrow’s deck? Would you send your result to someone?</li>
       ${cond().type === 'finale' && CFG.maxStakes ? '<li><b>Grand Finale:</b> did saving (or not saving) a stake for round 5 feel like a dramatic decision — or like a gamble on the whole game?</li>' : ''}
-    </ol></details>
+    </ol></details>`}
   </section>`;
 }
 
+// End-of-game feedback for itch.io testers: two quick taps, an optional comment and name.
+function feedbackView() {
+  const f = S.fb || {}; const t = tester();
+  if (f.sent) return `<section class="fb"><b>Thanks — your feedback has been sent.</b><p class="note">Play again tomorrow for a new deck.</p></section>`;
+  const opt = (q, v, label) => `<button class="fbopt ${f[q] === v ? 'on' : ''}" data-fbq="${q}" data-fbv="${v}">${label}</button>`;
+  return `<section class="fb" id="fbbox"><b>Help test the game</b> <span class="note">(30 seconds)</span>
+    <div class="fbq"><span>Did you understand what to do by the end of round 1?</span><div>${opt('understood', 'yes', 'Yes')}${opt('understood', 'no', 'No')}</div></div>
+    <div class="fbq"><span>Would you play tomorrow’s deck?</span><div>${opt('again', 'yes', 'Yes')}${opt('again', 'maybe', 'Maybe')}${opt('again', 'no', 'No')}</div></div>
+    <label class="fbl">Anything confusing, fun or frustrating? <small>(optional)</small><textarea id="fbcomment" rows="3" maxlength="2000">${escapeHtml(f.comment || '')}</textarea></label>
+    <label class="fbl">Your name <small>(optional, so the developer knows who you are)</small><input id="fbname" maxlength="40" value="${escapeHtml(t.name || '')}"></label>
+    <button class="btn" id="fbsend">Send feedback</button>
+    <p class="note">${PRIVACY_NOTE}</p></section>`;
+}
+
 function labView() {
+  if (!showLab()) return '';
   return `<details class="lab" id="labbox"><summary>Balance lab</summary>
     <p>Plays random decks with the bots: scores by rule, plus how each ability is used and what it’s worth. “Contribution” = the careful bot’s score with the ability minus its score without it.</p>
     <div class="expbox"><b>Experiment E1 — Boost size</b><span>Applies to new games and lab runs.</span><div class="seg"><button class="${CFG.boost === 3 ? 'on' : ''}" data-boost="3">Boost +3</button><button class="${CFG.boost === 2 ? 'on' : ''}" data-boost="2">Boost +2</button></div></div>
@@ -260,6 +281,7 @@ function resolve(attr) {
 function finish() {
   const best = perfect(S.deck);
   const cb = botCareful(S.deck);
+  S.fb = {};
   S.bench = { best: best.pts, line: best.line, tt: botTopTrumps(S.deck).total, careful: cb.total,
     youStaked: S.log.map((l, i) => l.staked ? i + 1 : 0).filter(Boolean), carefulStaked: cb.rounds.filter(x => x.staked).map(x => x.round + 1), perfectStaked: best.line.filter(m => m.staked).map(m => m.round + 1) };
   const d = load();
@@ -270,7 +292,7 @@ function finish() {
     else S.record = `Replay — your recorded score for today is ${d.daily[key]}.`;
   }
   save(d);
-  logGame(S);
+  S.recId = logGame(S).id;
 }
 
 function runLabUI() {
@@ -340,6 +362,15 @@ document.addEventListener('click', e => {
   if (t.dataset.go === 'replay') { newGame(S.mode, S.code); return; }
   if (t.dataset.go === 'daily') { location.hash = 'daily'; return; }
   if (t.id === 'lab') { runLabUI(); return; }
+  if (t.dataset.fbq) { S.fb[t.dataset.fbq] = t.dataset.fbv; document.querySelectorAll(`[data-fbq="${t.dataset.fbq}"]`).forEach(b => b.classList.toggle('on', b === t)); return; }
+  if (t.id === 'fbsend') {
+    S.fb.comment = (document.getElementById('fbcomment') || {}).value || '';
+    const tt = tester(); tt.name = ((document.getElementById('fbname') || {}).value || '').trim().slice(0, 40); saveTester(tt);
+    if (!S.fb.understood && !S.fb.again && !S.fb.comment.trim()) { showTip('Tap an answer or add a comment first.'); return; }
+    reportFeedback(S.recId, S.fb); S.fb.sent = true;
+    const box = document.getElementById('fbbox'); if (box) { const d = document.createElement('div'); d.innerHTML = feedbackView(); box.replaceWith(d.firstElementChild); }
+    return;
+  }
   if (t.dataset.stakes !== undefined) { CFG.maxStakes = +t.dataset.stakes || null; applyStakeRules(); const d = load(); d.maxStakes = CFG.maxStakes; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(CFG.maxStakes ? `Candidate rules on: ${CFG.maxStakes} stakes per game, Grand Finale ×2. New game started.` : 'Default rules: unlimited stakes, Grand Finale ×3. New game started.'); return; }
   if (t.dataset.boost) { CFG.boost = +t.dataset.boost; const d = load(); d.boost = CFG.boost; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(`Boost is now +${CFG.boost}. New game started.`); return; }
 });

@@ -124,9 +124,18 @@ textarea.csv{width:100%;font:12px/1.3 ui-monospace,Menlo,monospace;border:1px so
 .stakecmp div:first-of-type{border-top:0}
 .stakecmp span{color:var(--muted)}
 .stake:disabled{opacity:.4;cursor:default}
+.fb{background:#fff;border:2px solid var(--acc);border-radius:12px;padding:12px;margin:14px 0}
+.fbq{margin-top:10px;font-size:14px}.fbq span{display:block;margin-bottom:6px}
+.fbq div{display:flex;gap:6px;flex-wrap:wrap}
+.fbopt{font:inherit;font-weight:700;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:10px;padding:7px 14px;cursor:pointer}
+.fbopt.on{background:var(--acc);color:#fff}
+.fbl{display:block;margin-top:10px;font-size:14px}.fbl small{color:var(--muted)}
+.fbl textarea,.fbl input{display:block;width:100%;margin-top:4px;font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px;background:#faf8f3}
+.fb .btn{margin-top:10px}
 </style></head><body><main id="app"></main><div id="bar"></div><div id="tip" role="status"></div><script>
+const DD_BUILD = { mode: "claude" };
 // ===== The Daily Deck — game engine v0.2 (no DOM) =====
-const VERSION = 'v0.2.6';
+const VERSION = 'v0.2.7';
 const ATTRS = ['Power', 'Speed', 'Range', 'Grit'];
 const SHORT = ['PWR', 'SPD', 'RNG', 'GRT'];
 const ABIL_KEYS = ['Scout', 'Switch', 'Boost', 'Shield'];
@@ -393,6 +402,7 @@ if (typeof module !== 'undefined') module.exports = { VERSION, ATTRS, SHORT, ABI
 // ===== The Daily Deck — test log (local + shared database) =====
 // Every finished game is saved in full: on this device always, and to the artifact's
 // shared database when the viewer is allowed to write there.
+const IS_ITCH = DD_BUILD.mode === 'itch'; // set by build.sh: 'claude' or 'itch'
 const GAMES_KEY = 'dailydeck-games-v1';
 const Cloud = { db: null, user: null, uid: null, status: 'connecting', owner: false, all: null, allStatus: '' };
 
@@ -445,7 +455,7 @@ async function syncPending() {
 
 function logGame(S) {
   const rec = buildRecord(S); const games = localGames(); games.push(rec); saveLocalGames(games);
-  syncPending();
+  if (IS_ITCH) reportGame(rec); else syncPending();
   return rec;
 }
 
@@ -477,12 +487,16 @@ const STATUS_TEXT = {
 function fmtDate(iso) { const d = new Date(iso); return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
 function roundShort(x) { const o = { win: '✓', tie: '=', loss: '✗' }[x.outcome]; return `${x.card}·${x.attr.slice(0, 3)}${x.ability ? '+' + x.ability : ''}${x.staked ? '●' : ''}${o}${x.pts > 0 ? '+' : ''}${x.pts}`; }
 
-function gamesCsv(games) {
-  const head = ['playedAt', 'version', 'boost', 'stakeLimit', 'finaleMult', 'stakesLeftAtR5', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'stakedRounds', 'carefulStakedRounds', 'perfectStakedRounds', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
-  const q = s => `"${String(s).replace(/"/g, '""')}"`;
+const GAME_HEAD = ['playedAt', 'version', 'boost', 'stakeLimit', 'finaleMult', 'stakesLeftAtR5', 'mode', 'deck', 'replay', 'rule', 'abilities', 'hand', 'stars', 'R1', 'R2', 'R3', 'R4', 'R5', 'stakedRounds', 'carefulStakedRounds', 'perfectStakedRounds', 'total', 'careful', 'perfect', 'topTrumps', 'pctPerfect', 'draftSecs', 'gameSecs'];
+function gameRowValues(g) {
   const sr = a => (a || []).map(r => 'R' + r).join(' ');
-  const rows = games.map(g => [g.playedAt, g.v, g.boost, g.maxStakes || 'unlimited', g.finaleMult ?? '', g.stakesLeftAtR5 ?? '', g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), sr(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)), sr(g.carefulStakedRounds), sr(g.perfectStakedRounds), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs].map(q).join(','));
-  return [head.join(','), ...rows].join('\n');
+  return [g.playedAt, g.v, g.boost, g.maxStakes || 'unlimited', g.finaleMult ?? '', g.stakesLeftAtR5 ?? '', g.mode, g.code || g.day, g.replay ? 'yes' : '', g.rule, g.abilities.join(' '), g.hand.join(''), g.stars, ...[0, 1, 2, 3, 4].map(i => g.rounds[i] ? roundShort(g.rounds[i]) : ''), sr(g.stakedRounds || g.rounds.filter(x => x.staked).map(x => x.r)), sr(g.carefulStakedRounds), sr(g.perfectStakedRounds), g.total, g.careful, g.perfect, g.topTrumps, g.pctPerfect, g.draftSecs, g.gameSecs];
+}
+// The same columns as the CSV export, as an object (what the itch.io build sends to the Sheet).
+function gameRowObject(g) { const v = gameRowValues(g); return Object.fromEntries(GAME_HEAD.map((h, i) => [h, v[i]])); }
+function gamesCsv(games) {
+  const q = s => `"${String(s).replace(/"/g, '""')}"`;
+  return [GAME_HEAD.join(','), ...games.map(g => gameRowValues(g).map(q).join(','))].join('\n');
 }
 
 function myGamesTable(games) {
@@ -528,12 +542,12 @@ function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp
 
 function logView() {
   const games = localGames();
-  return `<details class="lab" id="logbox"><summary>Test log</summary>
-    <p class="logstatus ${Cloud.status}">${STATUS_TEXT[Cloud.status]}</p>
+  return `<details class="lab" id="logbox"><summary>${IS_ITCH ? 'Your games' : 'Test log'}</summary>
+    ${IS_ITCH ? remoteStatusHtml() : `<p class="logstatus ${Cloud.status}">${STATUS_TEXT[Cloud.status]}</p>`}
     <h3>My games (${games.length} on this device)</h3>
     ${myGamesTable(games)}
     <div class="btns"><button class="btn sec" id="copymine">Copy my games (CSV)</button>
-    ${Cloud.status === 'ready' && Cloud.owner ? '<button class="btn sec" id="loadall">Load all testers</button>' : ''}</div>
+    ${!IS_ITCH && Cloud.status === 'ready' && Cloud.owner ? '<button class="btn sec" id="loadall">Load all testers</button>' : ''}</div>
     <textarea id="csvout" class="csv" readonly rows="4" hidden></textarea>
     ${Cloud.allStatus ? `<p class="note">${Cloud.allStatus}</p>` : ''}
     <div id="allout">${allTestersHtml()}</div>
@@ -556,7 +570,69 @@ document.addEventListener('click', e => {
   if (t.id === 'copyall' && Cloud.all) copyText(t, gamesCsv(Cloud.all.flatMap(p => p.games.map(g => ({ ...g, code: (g.code || g.day) + ' / ' + p.name })))));
 });
 
-initCloud();
+if (!IS_ITCH) initCloud(); else Cloud.status = 'local';
+// ===== The Daily Deck — playtest reporting (itch.io build) =====
+// In the itch.io build, every finished game (and any end-of-game feedback) is sent to a
+// Google Sheet through a small Apps Script web app. Nothing is sent in the Claude build.
+// Items wait in an on-device outbox until they've been sent, so a dropped connection or a
+// closed tab just means they go next time the game is opened.
+const OUTBOX_KEY = 'dailydeck-outbox-v1';
+const TESTER_KEY = 'dailydeck-tester-v1';
+const DEV_KEY = 'dailydeck-dev';
+
+function devMode() { try { return localStorage.getItem(DEV_KEY) === '1'; } catch (e) { return false; } }
+function setDevFromHash() {
+  try { if (location.hash === '#dev') localStorage.setItem(DEV_KEY, '1'); if (location.hash === '#nodev') localStorage.removeItem(DEV_KEY); } catch (e) { }
+}
+
+function tester() {
+  let t = null; try { t = JSON.parse(localStorage.getItem(TESTER_KEY)); } catch (e) { }
+  if (!t || !t.id) { t = { id: 't-' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4), name: '' }; saveTester(t); }
+  return t;
+}
+function saveTester(t) { try { localStorage.setItem(TESTER_KEY, JSON.stringify(t)); } catch (e) { } }
+function deviceKind() { try { return window.matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse'; } catch (e) { return ''; } }
+
+function outbox() { try { return JSON.parse(localStorage.getItem(OUTBOX_KEY)) || []; } catch (e) { return []; } }
+function saveOutbox(o) { try { localStorage.setItem(OUTBOX_KEY, JSON.stringify(o.slice(-300))); } catch (e) { } }
+
+function enqueue(kind, data) {
+  if (!IS_ITCH || !DD_BUILD.endpoint) return;
+  const t = tester();
+  const item = { key: kind + ':' + (data.gameId || Date.now()), sent: false, body: { kind, token: DD_BUILD.token, build: DD_BUILD.mode, testerId: t.id, nickname: t.name || '', device: deviceKind(), ...data } };
+  const o = outbox().filter(x => x.key !== item.key); o.push(item); saveOutbox(o);
+  flushOutbox();
+}
+
+let flushing = false;
+async function flushOutbox() {
+  if (!IS_ITCH || !DD_BUILD.endpoint || flushing) return; flushing = true;
+  try {
+    const o = outbox();
+    for (const item of o.filter(x => !x.sent)) {
+      try {
+        // A "simple" request (text/plain, no-cors) so the browser needs no permission check
+        // from Google. The reply can't be read, so a resolved request counts as sent.
+        await fetch(DD_BUILD.endpoint, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(item.body) });
+        item.sent = true; item.sentAt = new Date().toISOString();
+      } catch (e) { break; } // offline or blocked: keep the rest for next time
+    }
+    saveOutbox(o);
+  } finally { flushing = false; if (typeof refreshLogView === 'function') refreshLogView(); }
+}
+function outboxWaiting() { return outbox().filter(x => !x.sent).length; }
+
+function reportGame(rec) { enqueue('game', { gameId: rec.id, ...gameRowObject(rec) }); }
+function reportFeedback(gameId, fb) { enqueue('feedback', { gameId, understoodR1: fb.understood || '', playAgain: fb.again || '', comment: (fb.comment || '').slice(0, 2000) }); }
+
+function remoteStatusHtml() {
+  if (!DD_BUILD.endpoint) return '<p class="logstatus local">Results are kept on this device only.</p>';
+  const w = outboxWaiting();
+  return w ? `<p class="logstatus error">${w} result${w > 1 ? 's' : ''} waiting to send. They'll go automatically when you're online.</p>`
+    : '<p class="logstatus ready">✓ Your results have been sent to the developer.</p>';
+}
+
+if (IS_ITCH) { setDevFromHash(); window.addEventListener('online', flushOutbox); setTimeout(flushOutbox, 1500); }
 // ===== The Daily Deck — interface v0.2 =====
 const $app = document.getElementById('app');
 const $bar = document.getElementById('bar');
@@ -569,6 +645,10 @@ CFG.maxStakes = load().maxStakes === 2 ? 2 : null;
 // Candidate rules (D23): two stakes per game come with Grand Finale ×2. Default rules keep ×3.
 function applyStakeRules() { CFG.finaleMult = CFG.maxStakes ? 2 : 3; }
 applyStakeRules();
+// itch.io playtest build: candidate ruleset v1 is fixed (D28) — testers never see the experiment toggles.
+if (IS_ITCH) { CFG.boost = 2; CFG.maxStakes = 2; applyStakeRules(); }
+const showLab = () => !IS_ITCH || devMode();
+const PRIVACY_NOTE = 'This is a playtest. When you finish a game, your result and any feedback you give are sent to the developer with a random tester ID. Nothing else about you is collected; adding a name is optional.';
 const stakesLeft = () => CFG.maxStakes == null ? null : CFG.maxStakes - S.stakesUsed;
 const fmtRounds = a => a && a.length ? a.map(r => 'R' + r).join(', ') : 'none';
 
@@ -586,7 +666,7 @@ function newGame(mode, code) {
     sel: null, attr: null, staked: false, log: [], total: 0, bench: null, record: null, t0: Date.now(), tDraft: null, stakesUsed: 0 };
   render(); window.scrollTo(0, 0);
 }
-function route() { const m = location.hash.match(/^#deck-([a-z0-9]{4,12})$/); if (m) newGame('practice', m[1]); else newGame('daily'); }
+function route() { if (IS_ITCH) setDevFromHash(); const m = location.hash.match(/^#deck-([a-z0-9]{4,12})$/); if (m) newGame('practice', m[1]); else newGame('daily'); }
 
 const cond = () => S.deck.condition;
 const isLow = r => cond().type === 'lowball' && cond().round === r;
@@ -610,10 +690,10 @@ function resultMark(l) { const sym = l.outcome === 'win' ? '✓' : l.outcome ===
 
 function header() {
   return `<header>
-    <div class="brand">The Daily Deck <span class="tag">prototype ${VERSION}</span></div>
+    <div class="brand">The Daily Deck <span class="tag">${IS_ITCH ? 'playtest' : 'prototype'} ${VERSION}</span></div>
     <div class="score">${S.total}<small> pts</small></div>
   </header>
-  <div class="meta">${S.mode === 'daily' ? 'Today’s deck · ' + niceDate() : 'Practice deck · <code>' + S.code + '</code>'}${CFG.boost !== 3 ? ` <span class="tag exp">Boost +${CFG.boost}</span>` : ''}${CFG.maxStakes ? ` <span class="tag exp">${CFG.maxStakes} stakes</span>` : ''}</div>
+  <div class="meta">${S.mode === 'daily' ? 'Today’s deck · ' + niceDate() : 'Practice deck · <code>' + S.code + '</code>'}${!IS_ITCH && CFG.boost !== 3 ? ` <span class="tag exp">Boost +${CFG.boost}</span>` : ''}${!IS_ITCH && CFG.maxStakes ? ` <span class="tag exp">${CFG.maxStakes} stakes</span>` : ''}</div>
   <div class="cond"><b>Today’s rule — ${cond().name}:</b> ${cond().text}</div>
   <details class="rules"><summary>How to play</summary>
     <ul>
@@ -625,6 +705,7 @@ function header() {
       <li><b>Abilities:</b> you get 3 today. Use at most <b>one per round</b>, alongside a card. Unused abilities score nothing.</li>
       <li>One rule changes every day. Everyone gets the same pool, house cards and abilities.</li>
     </ul>
+    ${IS_ITCH ? `<p class="note">${PRIVACY_NOTE}</p>` : ''}
   </details>`;
 }
 
@@ -729,28 +810,44 @@ function doneView() {
       <div><span>Perfect hindsight<small>knew every house card in advance</small></span><b>${b.best}</b></div>
       <div class="you"><span>You</span><b>${S.total}</b></div>
     </div>
+    ${IS_ITCH ? feedbackView() : ''}
     <div class="share"><textarea id="sharetxt" readonly rows="3">${shareText()}</textarea><button class="btn" id="copy">Copy result</button></div>
     <div class="btns">
       <button class="btn" data-go="practice">New practice deck</button>
       <button class="btn sec" data-go="replay">Replay this deck</button>
-      ${CFG.maxStakes ? '<button class="btn sec" data-go="finale">Grand Finale deck</button>' : ''}
+      ${CFG.maxStakes && showLab() ? '<button class="btn sec" data-go="finale">Grand Finale deck</button>' : ''}
       ${S.mode !== 'daily' ? '<button class="btn sec" data-go="daily">Today’s deck</button>' : ''}
     </div>
     <details><summary>Show the perfect line</summary><ol class="line">
       ${b.line.map(m => { const r = scoreRound(S.deck, { card: m.card, attr: m.attr, staked: m.staked, round: m.round, ability: m.ability }); return `<li>${S.deck.pool[m.card].id} · ${ATTRS[m.attr]}${m.ability ? ' + ' + m.ability : ''}${m.staked ? ' (staked)' : ''} — ${r.you} v ${r.them}, ${r.pts > 0 ? '+' : ''}${r.pts}</li>`; }).join('')}
     </ol><p class="note">With perfect knowledge only Boost changes the result, so Scout and Switch never appear here.</p></details>
-    <details class="tester"><summary>Tester questions</summary><ol>
+    ${IS_ITCH ? '' : `<details class="tester"><summary>Tester questions</summary><ol>
       <li>Did you understand what to do by the end of round 1?</li>
       <li>Did the draft feel like a real decision, or a chore?</li>
       <li>When did you use each ability — and why then?</li>
       <li>Did staking feel exciting, or just risky?</li>
       <li>Would you play tomorrow’s deck? Would you send your result to someone?</li>
       ${cond().type === 'finale' && CFG.maxStakes ? '<li><b>Grand Finale:</b> did saving (or not saving) a stake for round 5 feel like a dramatic decision — or like a gamble on the whole game?</li>' : ''}
-    </ol></details>
+    </ol></details>`}
   </section>`;
 }
 
+// End-of-game feedback for itch.io testers: two quick taps, an optional comment and name.
+function feedbackView() {
+  const f = S.fb || {}; const t = tester();
+  if (f.sent) return `<section class="fb"><b>Thanks — your feedback has been sent.</b><p class="note">Play again tomorrow for a new deck.</p></section>`;
+  const opt = (q, v, label) => `<button class="fbopt ${f[q] === v ? 'on' : ''}" data-fbq="${q}" data-fbv="${v}">${label}</button>`;
+  return `<section class="fb" id="fbbox"><b>Help test the game</b> <span class="note">(30 seconds)</span>
+    <div class="fbq"><span>Did you understand what to do by the end of round 1?</span><div>${opt('understood', 'yes', 'Yes')}${opt('understood', 'no', 'No')}</div></div>
+    <div class="fbq"><span>Would you play tomorrow’s deck?</span><div>${opt('again', 'yes', 'Yes')}${opt('again', 'maybe', 'Maybe')}${opt('again', 'no', 'No')}</div></div>
+    <label class="fbl">Anything confusing, fun or frustrating? <small>(optional)</small><textarea id="fbcomment" rows="3" maxlength="2000">${escapeHtml(f.comment || '')}</textarea></label>
+    <label class="fbl">Your name <small>(optional, so the developer knows who you are)</small><input id="fbname" maxlength="40" value="${escapeHtml(t.name || '')}"></label>
+    <button class="btn" id="fbsend">Send feedback</button>
+    <p class="note">${PRIVACY_NOTE}</p></section>`;
+}
+
 function labView() {
+  if (!showLab()) return '';
   return `<details class="lab" id="labbox"><summary>Balance lab</summary>
     <p>Plays random decks with the bots: scores by rule, plus how each ability is used and what it’s worth. “Contribution” = the careful bot’s score with the ability minus its score without it.</p>
     <div class="expbox"><b>Experiment E1 — Boost size</b><span>Applies to new games and lab runs.</span><div class="seg"><button class="${CFG.boost === 3 ? 'on' : ''}" data-boost="3">Boost +3</button><button class="${CFG.boost === 2 ? 'on' : ''}" data-boost="2">Boost +2</button></div></div>
@@ -819,6 +916,7 @@ function resolve(attr) {
 function finish() {
   const best = perfect(S.deck);
   const cb = botCareful(S.deck);
+  S.fb = {};
   S.bench = { best: best.pts, line: best.line, tt: botTopTrumps(S.deck).total, careful: cb.total,
     youStaked: S.log.map((l, i) => l.staked ? i + 1 : 0).filter(Boolean), carefulStaked: cb.rounds.filter(x => x.staked).map(x => x.round + 1), perfectStaked: best.line.filter(m => m.staked).map(m => m.round + 1) };
   const d = load();
@@ -829,7 +927,7 @@ function finish() {
     else S.record = `Replay — your recorded score for today is ${d.daily[key]}.`;
   }
   save(d);
-  logGame(S);
+  S.recId = logGame(S).id;
 }
 
 function runLabUI() {
@@ -899,6 +997,15 @@ document.addEventListener('click', e => {
   if (t.dataset.go === 'replay') { newGame(S.mode, S.code); return; }
   if (t.dataset.go === 'daily') { location.hash = 'daily'; return; }
   if (t.id === 'lab') { runLabUI(); return; }
+  if (t.dataset.fbq) { S.fb[t.dataset.fbq] = t.dataset.fbv; document.querySelectorAll(`[data-fbq="${t.dataset.fbq}"]`).forEach(b => b.classList.toggle('on', b === t)); return; }
+  if (t.id === 'fbsend') {
+    S.fb.comment = (document.getElementById('fbcomment') || {}).value || '';
+    const tt = tester(); tt.name = ((document.getElementById('fbname') || {}).value || '').trim().slice(0, 40); saveTester(tt);
+    if (!S.fb.understood && !S.fb.again && !S.fb.comment.trim()) { showTip('Tap an answer or add a comment first.'); return; }
+    reportFeedback(S.recId, S.fb); S.fb.sent = true;
+    const box = document.getElementById('fbbox'); if (box) { const d = document.createElement('div'); d.innerHTML = feedbackView(); box.replaceWith(d.firstElementChild); }
+    return;
+  }
   if (t.dataset.stakes !== undefined) { CFG.maxStakes = +t.dataset.stakes || null; applyStakeRules(); const d = load(); d.maxStakes = CFG.maxStakes; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(CFG.maxStakes ? `Candidate rules on: ${CFG.maxStakes} stakes per game, Grand Finale ×2. New game started.` : 'Default rules: unlimited stakes, Grand Finale ×3. New game started.'); return; }
   if (t.dataset.boost) { CFG.boost = +t.dataset.boost; const d = load(); d.boost = CFG.boost; save(d); newGame(S.mode, S.code); document.getElementById('labbox').open = true; showTip(`Boost is now +${CFG.boost}. New game started.`); return; }
 });

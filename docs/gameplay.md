@@ -1,6 +1,6 @@
 # The Daily Deck — Gameplay Design Document
 
-> **Status:** Living document · **Current version:** v0.2.6 (placeholder-numbers prototype)
+> **Status:** Living document · **Current version:** v0.2.7 (placeholder-numbers prototype)
 > **Last updated:** 16 Nov 2026
 > **Prototype:** https://claude.ai/artifact/9dszi39qzrajPPTgUntgRo
 
@@ -585,6 +585,7 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 | D16 | 16 Nov 2026 | Boost: +3 remains the reference, **+2 with normal staking is the leading candidate** pending human playtests. Other abilities unchanged. E2 (no staking) run separately, as a diagnostic only. | E1 shows +2 keeps Boost decisive. E2 confirms the stake drives its value, but removes a decision. | 🔄 Leaning +2, awaiting playtests |
 | D17 | 16 Nov 2026 | Design for interesting choices, not identical numbers (§2.3). Abilities should differ in strength and situation. Equal contribution is not a balance target. | Mathematically interchangeable options make for dull decisions. | ✅ Decided |
 | D18 | 16 Nov 2026 | Measure how often humans decline to stake when using each ability, especially Boost. | The bot can't show perceived risk. Human behaviour decides whether Boost is really dominant. | ✅ Decided (in prototype v0.2.2) |
+| D29 | 24 Nov 2026 | **Playtest with outside testers on itch.io.** The build has candidate ruleset v1 fixed. Each finished game and any feedback goes to a Google Sheet automatically. Built on a separate branch (`itch-playtest`). | All evidence so far is from Rob. itch.io reaches testers without Claude accounts, and the Sheet collects their games without manual CSV exports. | 🔄 Built. Awaiting Sheet setup and itch.io page (`docs/itch-playtest.md`) |
 | D28 | 17 Nov 2026 | **Candidate ruleset v1 frozen:** two-stake limit · Grand Finale ×2 · Boost +2 · abilities applied to the round they're played in. No changes to these during the next batch: **10–15 games across the normal mix of daily rules** (daily deck and ordinary practice decks, not the Grand Finale button). | Tests whether the competitive results hold across the wider game, not just on Finale days. | ✅ Batch done (§19.12): results hold across rules. Fresh testers needed next |
 | D27 | 17 Nov 2026 | **Boost +2 adopted into the candidate ruleset.** | Rob: +3 is "overwhelming"; +2 "brings a bit more balance". Data: flip rate 87% → 33%, staked Boost wins 100% → 80%, and stake declines rose to 44% (§19.10). | ✅ Decided |
 | D26 | 17 Nov 2026 | Next playtest batch: **Boost +2** under the two-stake ruleset (2 stakes, Grand Finale ×2), everything else unchanged. Compare with the +3 baseline from logged games (§19.8). | E1 (§12.5) made +2 the leading Boost candidate but needed human data. One variable at a time (D14). | ✅ Done. +2 adopted (D27) |
@@ -601,6 +602,19 @@ No subscription in the initial product. Nothing purchasable may affect the daily
 ---
 
 ## 16. Change log
+
+### v0.2.7 — 24 Nov 2026 (branch `itch-playtest`)
+- **itch.io playtest build (D29):** `npm run build:itch` produces a single-file game for itch.io. It has candidate ruleset v1 fixed, no Balance lab or experiment toggles (developers can add `#dev`), and a "playtest" label.
+- **Automatic results:** each finished game is sent to a Google Sheet through a small Apps Script (`apps-script/Code.gs`), as one row with the same columns as the CSV export, plus tester ID, optional name and device. An on-device outbox resends anything that couldn't go. The receiver drops duplicates and rejects junk.
+- **End-of-game feedback (itch build only):**
+  - "Did you understand it by the end of round 1?" (yes / no)
+  - "Would you play tomorrow's deck?" (yes / maybe / no)
+  - an optional comment and an optional name
+  - sent to the Sheet's Feedback tab
+- **Privacy notice** in How to play and under the feedback box. A random tester ID is used, and a name only if the tester adds one.
+- **Optional daily summary email** of the last 24 hours' games and feedback.
+- **Publishing guide:** `docs/itch-playtest.md`.
+- **Claude build:** behaviour unchanged.
 
 ### Docs — 17 Nov 2026
 - D27: Boost +2 adopted. D28: candidate ruleset v1 frozen (2 stakes · Grand Finale ×2 · Boost +2 · abilities apply to the round played). §19.11 sets up the mixed-rule batch. New script `sim/candidate.js` simulates v1 by daily rule.
